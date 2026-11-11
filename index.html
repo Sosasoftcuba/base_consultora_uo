@@ -88,13 +88,15 @@
 
         .results-info { font-size: 0.95rem; color: var(--text-main); margin-bottom: 1rem; font-weight: 500; }
         .results-list { display: flex; flex-direction: column; gap: 1rem; }
+        
+        /* PUNTO 3: 12 líneas en el texto de la tarjeta */
         .card { background-color: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--primary); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); transition: transform 0.15s ease, box-shadow 0.15s ease; animation: fadeIn 0.3s ease-out; }
         .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #bfdbfe; }
         .card-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; }
         .card-title a { color: var(--primary); text-decoration: none; }
         .card-title a:hover { text-decoration: underline; }
         .source-tag { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); background-color: var(--bg-page); padding: 0.2rem 0.6rem; border-radius: 4px; margin-right: 0.5rem; border: 1px solid var(--border); display: inline-block; margin-bottom: 0.5rem; }
-        .card-text { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-text { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 12; -webkit-box-orient: vertical; overflow: hidden; }
         .card-text mark { background-color: var(--highlight); color: #854d0e; padding: 0.1em 0.2em; border-radius: 3px; font-weight: 500; }
         .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1rem; flex-wrap: wrap; gap: 1rem; }
         .info-tag { font-size: 0.8rem; color: var(--text-muted); background-color: #f1f5f9; padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px dashed #cbd5e1; font-weight: 500; }
@@ -119,6 +121,20 @@
         .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
         .footer-legal { width: 100%; text-align: justify; font-size: 0.85rem; color: var(--text-main); background-color: #fafafa; margin-top: 1rem; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); line-height: 1.5; }
         .footer-legal strong { color: #000000; } 
+
+        /* Contadores */
+        .stats-container { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
+        .stat-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .stat-item strong { color: var(--primary); font-size: 1rem; }
+
+        /* PUNTO 1: Responsivo para horizontal en móviles (pantallas bajas) */
+        @media (max-height: 500px) {
+            header { position: relative; } /* Evita que se quede pegado al girar */
+            .header-content { flex-direction: row; justify-content: center; padding: 0.5rem 1rem; }
+            .logo-img { height: 40px; }
+            .logo-subtitle { display: none; }
+            .env-badge { display: none; } /* Ocultar en horizontal para ahorrar espacio */
+        }
 
         @media (max-width: 768px) {
             .header-content { flex-direction: column; text-align: center; gap: 1rem; }
@@ -204,9 +220,10 @@
         <div id="resultsInfo" class="results-info"></div>
         <div id="resultsList" class="results-list"></div>
 
+        <!-- PUNTO 5: Texto de paginación acortado -->
         <div id="pagination" class="pagination">
             <button id="prevBtn" class="btn-page">Anterior</button>
-            <span id="pageInfo" class="page-info">Página 1 de 1</span>
+            <span id="pageInfo" class="page-info">Pág. 1 de 1</span>
             <button id="nextBtn" class="btn-page">Siguiente</button>
         </div>
     </main>
@@ -229,6 +246,17 @@
                     &copy; <span id="year"></span> Todos los derechos reservados.
                 </div>
             </div>
+            
+            <!-- PUNTO 2: CONTADORES DE VISITAS -->
+            <div class="stats-container">
+                <div class="stat-item">
+                    👁️ Visitas a la página: <strong id="visit-count">...</strong>
+                </div>
+                <div class="stat-item">
+                    📄 Tesis consultadas: <strong id="thesis-count">...</strong>
+                </div>
+            </div>
+
             <div class="footer-legal">
                 <strong>Advertencia:</strong> El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
             </div>
@@ -236,6 +264,27 @@
     </footer>
 
     <script>
+        // --- LÓGICA DE CONTADORES (COUNTAPI.XYZ) ---
+        // Sumar 1 visita a la página
+        fetch('https://api.countapi.xyz/hit/sosasoftcuba.github.io/base_consultora_uo/visits')
+            .then(res => res.json())
+            .then(data => { document.getElementById('visit-count').innerText = data.value; })
+            .catch(e => { document.getElementById('visit-count').innerText = 'N/D'; });
+
+        // Leer el contador total de tesis consultadas
+        fetch('https://api.countapi.xyz/get/sosasoftcuba.github.io/base_consultora_uo/thesis_hits')
+            .then(res => res.json())
+            .then(data => { document.getElementById('thesis-count').innerText = data.value || 0; })
+            .catch(e => { document.getElementById('thesis-count').innerText = 'N/D'; });
+
+        // Función para sumar 1 cuando se hace clic en "Leer documento"
+        function registrarConsulta() {
+            fetch('https://api.countapi.xyz/hit/sosasoftcuba.github.io/base_consultora_uo/thesis_hits')
+                .then(res => res.json())
+                .then(data => { document.getElementById('thesis-count').innerText = data.value; })
+                .catch(e => {});
+        }
+
         // 1. VARIABLES GLOBALES
         let chunkIndex = 1;
         window.TESIS = [];
@@ -400,7 +449,6 @@
             
             document.getElementById('progress-bar').style.width = `${progress}%`;
 
-            // CORRECCIÓN AQUÍ: Evita que intente buscar un bloque inexistente
             if (chunkIndex > window.TOTAL_CHUNKS) {
                 finalizarCarga();
                 return;
@@ -487,7 +535,8 @@
             const nextBtn = document.getElementById('nextBtn');
             const pageInfo = document.getElementById('pageInfo');
 
-            const RESULTADOS_POR_PAGINA = 10;
+            // PUNTO 4: 8 resultados por página
+            const RESULTADOS_POR_PAGINA = 8; 
             let paginaActual = 1;
             let totalPaginas = 1;
             let resultadosFiltrados = [];
@@ -534,6 +583,7 @@
                 return regex ? highlighted.replace(regex, '<mark>$1</mark>') : highlighted;
             };
 
+            // PUNTO 3: 70 caracteres antes y 500 después
             const createSnippet = (text, searchTerms, exactPhrase) => {
                 const normalizedText = normalizeText(text);
                 let firstMatchIndex = -1;
@@ -550,8 +600,8 @@
                 }
                 if (firstMatchIndex === -1) return text.substring(0, 200) + '...';
 
-                const start = Math.max(0, firstMatchIndex - 200);
-                const end = Math.min(text.length, firstMatchIndex + 400);
+                const start = Math.max(0, firstMatchIndex - 70);
+                const end = Math.min(text.length, firstMatchIndex + 500);
                 let snippet = text.substring(start, end);
                 return (start > 0 ? '...' : '') + snippet + (end < text.length ? '...' : '');
             };
@@ -565,7 +615,9 @@
                 }
 
                 pagination.style.display = 'flex';
-                pageInfo.textContent = `Página ${paginaActual} de ${totalPaginas}`;
+                
+                // PUNTO 5: Texto "Pág. X de Y"
+                pageInfo.textContent = `Pág. ${paginaActual} de ${totalPaginas}`;
                 prevBtn.disabled = paginaActual === 1;
                 nextBtn.disabled = paginaActual === totalPaginas;
 
@@ -582,10 +634,12 @@
 
                     const card = document.createElement('article');
                     card.className = 'card';
+                    
+                    // Al hacer clic en el enlace, se registra la consulta (Punto 2)
                     card.innerHTML = `
                         <div class="source-tag">Fuente: ${fuenteStr}</div>
                         <h2 class="card-title">
-                            <a href="${item.archivo}" target="_blank">
+                            <a href="${item.archivo}" target="_blank" onclick="registrarConsulta()">
                                 ${item.titulo.startsWith('Tesis') ? '' : 'Tesis: '}${highlightMatches(item.titulo, highlightRegex)}
                             </a>
                         </h2>
@@ -594,7 +648,7 @@
                             <div class="info-tag">
                                 Resultado en las primeras 20,000 palabras. Debe consultar el PDF para ampliar la información.
                             </div>
-                            <a href="${item.archivo}" target="_blank" class="btn-open">
+                            <a href="${item.archivo}" target="_blank" class="btn-open" onclick="registrarConsulta()">
                                 Leer documento
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                             </a>

@@ -465,7 +465,7 @@
                 return (start > 0 ? '...' : '') + snippet + (end < text.length ? '...' : '');
             };
 
-            // --- NUEVA FUNCIÓN: RENDERIZAR PÁGINA ---
+            // --- FUNCIÓN: RENDERIZAR PÁGINA (Con detección de Internet/Local) ---
             const renderizarPagina = (query, normalizedQuery, searchTerms, highlightRegex) => {
                 resultsList.innerHTML = '';
 
@@ -488,7 +488,12 @@
                 // Dibujar las tarjetas
                 itemsPagina.forEach(({ item }) => {
                     const rawSnippet = createSnippet(item.texto, searchTerms, normalizedQuery); 
-                    const fuenteStr = item.fuente || 'Local';
+                    
+                    // LÓGICA DE LA FUENTE: Detecta si está en internet o local
+                    let fuenteStr = item.fuente || 'Local';
+                    if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                        fuenteStr = "Internet"; 
+                    }
 
                     const card = document.createElement('article');
                     card.className = 'card';

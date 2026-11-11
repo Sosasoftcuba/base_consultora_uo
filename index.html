@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultora de Tesis | Universidad de Oriente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #f8fafc;         
+            --surface: #ffffff;         
+            --primary: #1d4ed8;         
+            --primary-light: #eff6ff;   
+            --primary-hover: #1e40af;
+            
+            --text-main: #1e293b;       
+            --text-muted: #64748b;      
+            --border: #e2e8f0;          
+            
+            --alert-bg: #fef2f2;        
+            --alert-border: #f87171;
+            --alert-text: #991b1b;
+            
+            --warn-bg: #fffbeb;         
+            --warn-border: #fcd34d;
+            --warn-text: #92400e;
+
+            --highlight: #fef08a;
+            --radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden; 
+        }
+
+        header {
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .brand-group { display: flex; align-items: center; gap: 1rem; }
+        .logo-img { height: 55px; width: auto; object-fit: contain; color: transparent; }
+        .separator { font-size: 2rem; font-weight: 300; color: var(--border); line-height: 1; }
+        .logo-text { display: flex; flex-direction: column; line-height: 1.3; }
+        .logo-title { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+        .logo-subtitle { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); }
+
+        .env-badge {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid #bfdbfe;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        main {
+            flex: 1;
+            max-width: 1100px; 
+            margin: 0 auto;
+            width: 100%;
+            padding: 3rem 1.5rem;
+        }
+
+        .panel {
+            display: none;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+            animation: slideDown 0.4s ease-out;
+        }
+
+        .panel h3 { margin-bottom: 0.75rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+        .panel p { margin-bottom: 0.75rem; }
+        .panel ul { margin-left: 1.5rem; margin-bottom: 0.75rem; }
+        .panel li { margin-bottom: 0.5rem; }
+        .panel code { background-color: rgba(0,0,0,0.06); padding: 0.2rem 0.5rem; border-radius: 6px; font-family: monospace; font-weight: 600; }
+
+        #error-panel { background-color: var(--alert-bg); border: 1px solid var(--alert-border); border-left: 5px solid var(--alert-border); color: var(--alert-text); }
+        #warn-panel { background-color: var(--warn-bg); border: 1px solid var(--warn-border); border-left: 5px solid #f59e0b; color: var(--warn-text); }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero { text-align: center; margin-bottom: 2.5rem; }
+        .hero h3 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; }
+        .hero p { font-size: clamp(1rem, 2vw, 1.1rem); color: var(--text-muted); max-width: 800px; margin: 0 auto 0.5rem auto; }
+
+        .search-container { position: relative; max-width: 700px; margin: 0 auto 3rem auto; }
+
+        .search-box {
+            display: flex; background-color: var(--surface); border: 1px solid var(--border);
+            border-radius: 50px; padding: 0.5rem; box-shadow: var(--shadow-md); transition: all 0.2s ease;
+        }
+
+        .search-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light), var(--shadow-lg); }
+        .search-icon { display: flex; align-items: center; padding-left: 1rem; color: var(--text-muted); }
+        .search-input { flex: 1; border: none; background: transparent; padding: 0.75rem 1rem; font-size: 1.1rem; color: var(--text-main); outline: none; font-family: inherit; width: 100%; }
+        .clear-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0 0.5rem; display: none; align-items: center; }
+        .btn-search { background-color: var(--primary); color: white; border: none; border-radius: 40px; padding: 0 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+        .btn-search:hover { background-color: var(--primary-hover); }
+
+        .results-info { font-size: 0.95rem; color: var(--text-main); margin-bottom: 1rem; font-weight: 500; }
+        .results-list { display: flex; flex-direction: column; gap: 1rem; }
+
+        .card {
+            background-color: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--primary);
+            border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm);
+            transition: transform 0.15s ease, box-shadow 0.15s ease; animation: fadeIn 0.3s ease-out;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #bfdbfe; }
+
+        .card-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; }
+        .card-title a { color: var(--primary); text-decoration: none; }
+        .card-title a:hover { text-decoration: underline; }
+        
+        .source-tag {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            background-color: var(--bg-page);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            margin-right: 0.5rem;
+            border: 1px solid var(--border);
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Párrafo ampliado a 8 líneas */
+        .card-text { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-text mark { background-color: var(--highlight); color: #854d0e; padding: 0.1em 0.2em; border-radius: 3px; font-weight: 500; }
+
+        .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1rem; flex-wrap: wrap; gap: 1rem; }
+        
+        .info-tag {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background-color: #f1f5f9;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            border: 1px dashed #cbd5e1;
+            font-weight: 500;
+        }
+
+        .btn-open { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--primary); text-decoration: none; transition: color 0.2s; padding: 0.5rem 1rem; background-color: var(--primary-light); border-radius: 8px; }
+        .btn-open:hover { background-color: #dbeafe; }
+
+        footer { background-color: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; margin-top: auto; }
+        .footer-content { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+        .footer-left { display: flex; align-items: center; gap: 1rem; }
+        .footer-left img { height: 35px; width: auto; }
+        .footer-brand { display: flex; flex-direction: column; line-height: 1.2; }
+        .footer-brand-title { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+        .footer-brand-sub { font-size: 0.8rem; color: var(--text-muted); }
+        .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; text-align: right; }
+        .footer-email { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
+        .footer-email:hover { text-decoration: underline; }
+        .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* Estilo para el texto legal en el footer */
+        .footer-legal {
+            width: 100%;
+            text-align: justify;
+            font-size: 0.85rem;
+            color: var(--text-main); 
+            background-color: #fafafa; 
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            line-height: 1.5;
+        }
+        .footer-legal strong { color: #000000; } 
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; text-align: center; gap: 1rem; }
+            .brand-group { flex-direction: column; gap: 0.5rem; }
+            .separator { display: none; }
+            .logo-img { height: 100px; max-width: 90%; }
+            .logo-title { font-size: 1.2rem; }
+            .logo-subtitle { font-size: 0.9rem; }
+            .env-badge { white-space: normal; justify-content: center; width: 100%; max-width: 320px; }
+            main { padding: 2rem 1rem; }
+            .search-box { flex-direction: column; border-radius: 16px; padding: 0.75rem; }
+            .search-icon { display: none; }
+            .search-input { padding: 0.75rem 2.5rem 0.75rem 0.5rem; font-size: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
+            .clear-btn { position: absolute; right: 1rem; top: 1rem; display: flex; }
+            .btn-search { border-radius: 12px; padding: 0.85rem; width: 100%; }
+            .card { padding: 1.25rem; border-left-width: 4px; }
+            .card-footer { flex-direction: column; align-items: stretch; }
+            .btn-open { justify-content: center; }
+            .footer-content { flex-direction: column; justify-content: center; gap: 1.5rem; }
+            .footer-left { flex-direction: column; text-align: center; gap: 0.5rem; }
+            .footer-right { align-items: center; text-align: center; }
+            .footer-legal { text-align: center; } 
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="brand-group">
+                <img src="imagen/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+                <span class="separator">|</span>
+                <div class="logo-text">
+                    <span class="logo-title">Consultora de Tesis Local</span>
+                    <span class="logo-subtitle">Facultad Ciencias de la Educación</span>
+                </div>
+            </div>
+            <div class="env-badge" id="env-info">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                Cargando info...
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="error-panel" class="panel">
+            <h3>Error Crítico: Faltan los datos de las tesis</h3>
+            <p>No se pudo cargar el archivo <code>datos.js</code>. El buscador no funcionará hasta que generes este archivo.</p>
+            <div id="error-instructions"></div>
+        </div>
+
+        <div id="warn-panel" class="panel">
+            <h3>⚠️ Aviso de compatibilidad en tu navegador</h3>
+            <div id="warn-instructions"></div>
+        </div>
+
+        <section class="hero" id="hero-section">
+            <h3>Bienvenido Investigador</h3>
+            <p>Puede buscar por título, autor, año o contenido.</p>
+        </section>
+
+        <div class="search-container" id="search-section">
+            <div class="search-box">
+                <span class="search-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </span>
+                <input type="text" id="searchInput" class="search-input" placeholder="Buscar tesis..." autocomplete="off">
+                <button id="clearBtn" class="clear-btn" title="Limpiar búsqueda">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+                <button id="searchBtn" class="btn-search">Buscar</button>
+            </div>
+        </div>
+
+        <div id="resultsInfo" class="results-info"></div>
+        <div id="resultsList" class="results-list"></div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <img src="imagen/logo.png" alt="Logo" onerror="this.style.display='none'">
+                <div class="footer-brand">
+                    <span class="footer-brand-title">Consultora de Tesis</span>
+                    <span class="footer-brand-sub">Facultad Ciencias de la Educación</span>
+                </div>
+            </div>
+            <div class="footer-right">
+                <a href="mailto:sosasoftcuba@gmail.com" class="footer-email">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    sosasoftcuba@gmail.com
+                </a>
+                <div class="footer-copy">
+                    &copy; <span id="year"></span> Todos los derechos reservados.
+                </div>
+            </div>
+            
+            <div class="footer-legal">
+                <strong>Advertencia:</strong> El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
+            </div>
+        </div>
+    </footer>
+
+    <script src="datos.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const errorPanel = document.getElementById('error-panel');
+            const errorInstructions = document.getElementById('error-instructions');
+            const warnPanel = document.getElementById('warn-panel');
+            const warnInstructions = document.getElementById('warn-instructions');
+            const searchSection = document.getElementById('search-section');
+            const heroSection = document.getElementById('hero-section');
+            
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearBtn = document.getElementById('clearBtn');
+            const resultsList = document.getElementById('resultsList');
+            const resultsInfo = document.getElementById('resultsInfo');
+            const envInfo = document.getElementById('env-info');
+
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            const ua = navigator.userAgent;
+            const isFile = window.location.protocol === 'file:' || window.location.protocol === 'content:';
+
+            let osName = "Desconocido";
+            if (/Windows/i.test(ua)) osName = "Windows";
+            else if (/Macintosh/i.test(ua) && !/Mobile/i.test(ua)) osName = "macOS";
+            else if (/Android/i.test(ua)) osName = "Android";
+            else if (/iPhone|iPad|iPod/i.test(ua)) osName = "iOS";
+            else if (/Linux/i.test(ua)) osName = "Linux";
+
+            let browserName = "Desconocido";
+            if (/SamsungBrowser/i.test(ua)) browserName = "Samsung Internet";
+            else if (/Edg/i.test(ua)) browserName = "Microsoft Edge";
+            else if (/OPR|Opera/i.test(ua)) browserName = "Opera";
+            else if (/Firefox|FxiOS/i.test(ua)) browserName = "Firefox";
+            else if (/Chrome|CriOS/i.test(ua)) browserName = "Chrome";
+            else if (/Safari/i.test(ua)) browserName = "Safari";
+
+            envInfo.innerHTML = `
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                Navegador: <strong>${browserName}</strong> desde <strong>${osName}</strong>
+            `;
+
+            if (typeof window.TESIS === 'undefined') {
+                searchSection.style.display = 'none';
+                heroSection.style.display = 'none';
+                errorPanel.style.display = 'block';
+
+                let msg = '';
+                if (osName === "Windows") {
+                    msg = `
+                        <p>Como estás en <strong>Windows</strong>, debes generar los datos ejecutando el motor de búsqueda:</p>
+                        <ul>
+                            <li>Ve a la carpeta <code>Base_Tesis/config</code>.</li>
+                            <li>Haz doble clic en <code>Instalar.bat</code>.</li>
+                            <li>Espera a que termine y actualiza esta página (<code>F5</code>).</li>
+                        </ul>
+                    `;
+                } else {
+                    msg = `
+                        <p>No se encontró el archivo <code>datos.js</code>. Debes conectar el teléfono a una PC, generar los datos ejecutando <code>Instalar.bat</code> (Windows) o <code>node indexar.js</code> (Linux/Mac), y volver a copiar la carpeta.</p>
+                    `;
+                }
+                errorInstructions.innerHTML = msg;
+                return; 
+            }
+
+            if (isFile) {
+                let showWarn = false;
+                let warnText = '';
+
+                if (osName === "Android" && browserName !== "Firefox") {
+                    showWarn = true;
+                    warnText = `
+                        <p>Estás usando <strong>${browserName}</strong> en Android. Este navegador bloquea la apertura de PDFs locales por seguridad.</p>
+                        <p><strong>¿Cómo solucionarlo?</strong></p>
+                        <ul>
+                            <li><strong>Opción A:</strong> Descarga <strong>Mozilla Firefox</strong> y abre este archivo con él.</li>
+                            <li><strong>Opción B:</strong> Ejecuta el script <code>server_http.py</code> con Python para crear un servidor local.</li>
+                        </ul>
+                    `;
+                } else if (browserName === "Safari") {
+                    showWarn = true;
+                    warnText = `
+                        <p>Estás usando <strong>Safari</strong>. Este navegador bloquea la apertura de PDFs locales por seguridad.</p>
+                        <ul>
+                            <li>Usa el script <code>server_http.py</code> de la carpeta <code>config</code> para levantar un servidor.</li>
+                            <li>O sube la carpeta a un hosting gratuito para acceder desde internet.</li>
+                        </ul>
+                    `;
+                }
+
+                if (showWarn) {
+                    warnPanel.style.display = 'block';
+                    warnInstructions.innerHTML = warnText;
+                }
+            }
+
+            const MAX_RESULTS = 50;
+            const tesis = window.TESIS;
+            const stopWords = ["de", "la", "el", "los", "las", "lo", "un", "una", "unos", "unas", "y", "o", "a", "en", "con", "por", "para", "del", "al", "que", "entre", "sin", "sobre", "tras", "ni", "e", "u", "es", "son", "como"];
+
+            const normalizeText = (text) => text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+            const escapeHTML = (str) => str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+            const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+            const buildHighlightRegex = (terms) => {
+                const accentMap = { 'a': '[aáàäâ]', 'e': '[eéèëê]', 'i': '[iíìïî]', 'o': '[oóòöô]', 'u': '[uúùüû]' };
+                const patterns = terms.map(term => escapeRegExp(term).split('').map(char => accentMap[char.toLowerCase()] || char).join(''));
+                patterns.sort((a, b) => b.length - a.length);
+                return patterns.length ? new RegExp(`(${patterns.join('|')})`, 'gi') : null;
+            };
+
+            const highlightMatches = (text, regex) => {
+                let highlighted = escapeHTML(text);
+                return regex ? highlighted.replace(regex, '<mark>$1</mark>') : highlighted;
+            };
+
+            const createSnippet = (text, searchTerms, exactPhrase) => {
+                const normalizedText = normalizeText(text);
+                let firstMatchIndex = -1;
+
+                if (exactPhrase && exactPhrase.length > 2) {
+                    const idx = normalizedText.indexOf(exactPhrase);
+                    if (idx !== -1) firstMatchIndex = idx;
+                }
+                if (firstMatchIndex === -1) {
+                    for (const term of searchTerms) {
+                        const index = normalizedText.indexOf(term);
+                        if (index !== -1 && (firstMatchIndex === -1 || index < firstMatchIndex)) firstMatchIndex = index;
+                    }
+                }
+                if (firstMatchIndex === -1) return text.substring(0, 200) + '...';
+
+                // AMPLIADO A 200 ANTES Y 400 DESPUÉS
+                const start = Math.max(0, firstMatchIndex - 200);
+                const end = Math.min(text.length, firstMatchIndex + 400);
+                let snippet = text.substring(start, end);
+                return (start > 0 ? '...' : '') + snippet + (end < text.length ? '...' : '');
+            };
+
+            const performSearch = () => {
+                const query = searchInput.value.trim();
+                if (query.length > 0) clearBtn.style.display = 'flex';
+                else {
+                    clearBtn.style.display = 'none';
+                    resultsList.innerHTML = '';
+                    resultsInfo.textContent = '';
+                    return;
+                }
+
+                const normalizedQuery = normalizeText(query);
+                const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
+                let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
+                if (searchTerms.length === 0) searchTerms = rawWords;
+
+                const termsToHighlight = [...new Set([normalizedQuery, ...searchTerms])].filter(t => t.length > 1);
+                const highlightRegex = buildHighlightRegex(termsToHighlight);
+
+                const results = [];
+                tesis.forEach(item => {
+                    let score = 0;
+                    const titleNorm = normalizeText(item.titulo);
+                    const textNorm = normalizeText(item.texto);
+                    let hasExactPhrase = false;
+
+                    // 1. Buscar frase exacta primero
+                    if (normalizedQuery.length > 2) {
+                        if (titleNorm.includes(normalizedQuery)) { score += 200; hasExactPhrase = true; }
+                        if (textNorm.includes(normalizedQuery)) { score += 100; hasExactPhrase = true; }
+                    }
+
+                    // 2. Luego separar por palabras clave
+                    let matchesAllKeyWords = true;
+                    searchTerms.forEach(term => {
+                        let termScore = 0;
+                        if (titleNorm.includes(term)) termScore += 50;
+                        const regex = new RegExp(escapeRegExp(term), 'g');
+                        termScore += Math.min((textNorm.match(regex) || []).length, 15);
+                        if (termScore === 0 && !hasExactPhrase) matchesAllKeyWords = false;
+                        score += termScore;
+                    });
+
+                    if ((matchesAllKeyWords || hasExactPhrase) && score > 0) results.push({ item, score });
+                });
+
+                results.sort((a, b) => b.score - a.score);
+                resultsList.innerHTML = '';
+                
+                if (results.length === 0) {
+                    resultsInfo.textContent = 'No se encontraron resultados.';
+                    return;
+                }
+
+                resultsInfo.innerHTML = `Se encontraron <strong>${results.length}</strong> tesis para "<em>${escapeHTML(query)}</em>"`;
+                
+                results.slice(0, MAX_RESULTS).forEach(({ item }) => {
+                    const rawSnippet = createSnippet(item.texto, searchTerms, normalizedQuery); 
+                    
+                    const fuenteStr = item.fuente || 'Local';
+
+                    const card = document.createElement('article');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="source-tag">Fuente: ${fuenteStr}</div>
+                        <h2 class="card-title">
+                            <a href="${item.archivo}" target="_blank">
+                                ${item.titulo.startsWith('Tesis') ? '' : 'Tesis: '}${highlightMatches(item.titulo, highlightRegex)}
+                            </a>
+                        </h2>
+                        <p class="card-text">${highlightMatches(rawSnippet, highlightRegex)}</p>
+                        <div class="card-footer">
+                            <div class="info-tag">
+                                Resultado en las primeras 20,000 palabras. Debe consultar el PDF para ampliar la información.
+                            </div>
+                            <a href="${item.archivo}" target="_blank" class="btn-open">
+                                Leer documento
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                        </div>
+                    `;
+                    resultsList.appendChild(card);
+                });
+            };
+
+            let debounceTimer;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(performSearch, 300);
+            });
+            searchBtn.addEventListener('click', performSearch);
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchInput.focus();
+                performSearch();
+            });
+        });
+    </script>
+</body>
+</html>

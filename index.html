@@ -129,11 +129,11 @@
 
         /* PUNTO 1: Responsivo para horizontal en móviles (pantallas bajas) */
         @media (max-height: 500px) {
-            header { position: relative; } /* Evita que se quede pegado al girar */
+            header { position: relative; } 
             .header-content { flex-direction: row; justify-content: center; padding: 0.5rem 1rem; }
             .logo-img { height: 40px; }
             .logo-subtitle { display: none; }
-            .env-badge { display: none; } /* Ocultar en horizontal para ahorrar espacio */
+            .env-badge { display: none; } 
         }
 
         @media (max-width: 768px) {
@@ -264,22 +264,22 @@
     </footer>
 
     <script>
-        // --- LÓGICA DE CONTADORES (COUNTAPI.XYZ) ---
+        // --- LÓGICA DE CONTADORES (ABACUS - SERVICIO ESTABLE) ---
         // Sumar 1 visita a la página
-        fetch('https://api.countapi.xyz/hit/sosasoftcuba.github.io/base_consultora_uo/visits')
+        fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/visitas_web')
             .then(res => res.json())
             .then(data => { document.getElementById('visit-count').innerText = data.value; })
             .catch(e => { document.getElementById('visit-count').innerText = 'N/D'; });
 
         // Leer el contador total de tesis consultadas
-        fetch('https://api.countapi.xyz/get/sosasoftcuba.github.io/base_consultora_uo/thesis_hits')
+        fetch('https://abacus.jasoncameron.dev/get/sosasoftcuba_uo/tesis_abiertas')
             .then(res => res.json())
             .then(data => { document.getElementById('thesis-count').innerText = data.value || 0; })
             .catch(e => { document.getElementById('thesis-count').innerText = 'N/D'; });
 
         // Función para sumar 1 cuando se hace clic en "Leer documento"
         function registrarConsulta() {
-            fetch('https://api.countapi.xyz/hit/sosasoftcuba.github.io/base_consultora_uo/thesis_hits')
+            fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/tesis_abiertas')
                 .then(res => res.json())
                 .then(data => { document.getElementById('thesis-count').innerText = data.value; })
                 .catch(e => {});
@@ -635,7 +635,6 @@
                     const card = document.createElement('article');
                     card.className = 'card';
                     
-                    // Al hacer clic en el enlace, se registra la consulta (Punto 2)
                     card.innerHTML = `
                         <div class="source-tag">Fuente: ${fuenteStr}</div>
                         <h2 class="card-title">

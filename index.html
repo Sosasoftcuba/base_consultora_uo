@@ -131,7 +131,7 @@
     <div id="loader-overlay">
         <div class="spinner"></div>
         <div class="loader-title">Descargando datos de tesis</div>
-        <div class="loader-text" id="loader-status">Iniciando descarga de bloques... Por favor espera.</div>
+        <div class="loader-text" id="loader-status">Verificando actualizaciones...</div>
         <div class="progress-container">
             <div id="progress-bar"></div>
         </div>
@@ -218,36 +218,136 @@
     </footer>
 
     <script>
-        // 1. MOTOR DE CARGA POR BLOQUES (CHUNKS)
+        // 1. MOTOR DE CARGA CON CACHÉ (INDEXEDDB) Y VERIFICACIÓN DE VERSIÓN
         let chunkIndex = 1;
-        const MAX_CHUNKS = 150; // Límite de seguridad (aprox 80 MB max)
-        window.TESIS = []; // Inicializar el array global aquí
+        window.TESIS = [];
+        const DB_NAME = 'ConsultoraDB';
+        const STORE_NAME = 'chunks';
 
-        function cargarChunks() {
-            if (chunkIndex > MAX_CHUNKS) {
-                finalizarCarga();
-                return;
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = e => {
+                    if (!e.target.result.objectStoreNames.contains(STORE_NAME)) {
+                        e.target.result.createObjectStore(STORE_NAME);
+                    }
+                };
+                request.onsuccess = e => resolve(e.target.result);
+                request.onerror = e => reject(e.target.error);
+            });
+        }
+
+        async function getChunk(key) {
+            try {
+                const db = await openDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(STORE_NAME, 'readonly');
+                    const store = tx.objectStore(STORE_NAME);
+                    const req = store.get(key);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch (e) { return null; }
+        }
+
+        async function saveChunk(key, data) {
+            try {
+                const db = await openDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(STORE_NAME, 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    store.put(data, key);
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => resolve();
+                });
+            } catch (e) {}
+        }
+
+        async function clearStore() {
+            try {
+                const db = await openDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(STORE_NAME, 'readwrite');
+                    const store = tx.objectStore(STORE_NAME);
+                    store.clear();
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => resolve();
+                });
+            } catch (e) {}
+        }
+
+        async function iniciarDescarga() {
+            document.getElementById('loader-status').innerText = "Verificando actualizaciones en el servidor...";
+
+            try {
+                // Pedir el meta fresco al servidor desde la carpeta index
+                const res = await fetch('index/datos_meta.js?t=' + Date.now());
+                if (!res.ok) throw new Error("No meta");
+                
+                const metaText = await res.text();
+                
+                const scriptMeta = document.createElement('script');
+                scriptMeta.textContent = metaText;
+                document.body.appendChild(scriptMeta);
+
+                const serverVersion = window.DATA_VERSION;
+                const cachedVersion = await getChunk('version');
+
+                if (serverVersion && cachedVersion === serverVersion) {
+                    console.log("Caché válida. Cargando desde memoria interna.");
+                } else {
+                    console.log("Nueva versión detectada. Limpiando caché antigua.");
+                    await clearStore(); 
+                    await saveChunk('version', serverVersion);
+                }
+                
+            } catch (e) {
+                console.log("Error verificando actualización, intentando caché offline.");
             }
 
-            document.getElementById('loader-status').innerText = `Descargando bloque ${chunkIndex}...`;
-            // Simulamos el avance de la barra (como no sabemos el total exacto, avanza hasta 95% y salta al 100 al final)
-            let progress = Math.min((chunkIndex / 40) * 100, 95); 
+            cargarChunks();
+        }
+
+        async function cargarChunks() {
+            const total = window.TOTAL_CHUNKS || '?';
+            
+            // TEXTO EXACTO CAMBIADO AQUÍ
+            document.getElementById('loader-status').innerText = `Cargando index ${chunkIndex} de ${total}...`;
+
+            let progress = window.TOTAL_CHUNKS 
+                ? Math.min((chunkIndex / window.TOTAL_CHUNKS) * 100, 99) 
+                : Math.min((chunkIndex / 40) * 100, 95);
+            
             document.getElementById('progress-bar').style.width = `${progress}%`;
 
-            const script = document.createElement('script');
-            script.src = `datos_${chunkIndex}.js`;
-            
-            script.onload = () => {
+            let cachedCode = await getChunk(chunkIndex);
+
+            if (cachedCode) {
+                const script = document.createElement('script');
+                script.textContent = cachedCode;
+                document.body.appendChild(script);
+                
                 chunkIndex++;
-                cargarChunks(); // Carga el siguiente
-            };
-            
-            script.onerror = () => {
-                // Si el archivo no existe (404), significa que llegamos al final
-                finalizarCarga();
-            };
-            
-            document.body.appendChild(script);
+                setTimeout(cargarChunks, 10);
+            } else {
+                // Descargar desde la carpeta index/
+                fetch(`index/datos_${chunkIndex}.js`)
+                    .then(res => {
+                        if (!res.ok) throw new Error("404");
+                        return res.text();
+                    })
+                    .then(async text => {
+                        await saveChunk(chunkIndex, text);
+                        const script = document.createElement('script');
+                        script.textContent = text;
+                        document.body.appendChild(script);
+                        chunkIndex++;
+                        cargarChunks();
+                    })
+                    .catch(err => {
+                        finalizarCarga();
+                    });
+            }
         }
 
         function finalizarCarga() {
@@ -256,11 +356,11 @@
             
             setTimeout(() => {
                 document.getElementById('loader-overlay').style.display = 'none';
-                initApp(); // Iniciar la interfaz del buscador
+                initApp();
             }, 500);
         }
 
-        // 2. LÓGICA DEL BUSCADOR (Se ejecuta al terminar la carga)
+        // 2. LÓGICA DEL BUSCADOR
         function initApp() {
             if (typeof window.TESIS === 'undefined' || window.TESIS.length === 0) {
                 document.getElementById('error-panel').style.display = 'block';
@@ -520,9 +620,9 @@
             });
         }
 
-        // Iniciar la carga en cadena apenas carga el DOM
+        // Iniciar el proceso
         document.addEventListener('DOMContentLoaded', () => {
-            cargarChunks();
+            iniciarDescarga();
         });
     </script>
 </body>

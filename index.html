@@ -400,6 +400,12 @@
             
             document.getElementById('progress-bar').style.width = `${progress}%`;
 
+            // CORRECCIÓN AQUÍ: Evita que intente buscar un bloque inexistente
+            if (chunkIndex > window.TOTAL_CHUNKS) {
+                finalizarCarga();
+                return;
+            }
+
             let cachedCode = await getChunk(chunkIndex);
 
             if (cachedCode) {

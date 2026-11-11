@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultora de Tesis | Universidad de Oriente</title>
+    
+    <!-- FAVICON (Icono de la pestaña y favoritos) -->
+    <link rel="icon" type="image/png" href="imagen/favicon.png">
+
+    <!-- OPEN GRAPH (Para WhatsApp, Facebook, Telegram) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://sosasoftcuba.github.io/base_consultora_uo/">
+    <meta property="og:title" content="Consultora de Tesis | Universidad de Oriente">
+    <meta property="og:description" content="Explora el repositorio académico. Busca por título, autor, año o contenido dentro de las tesis.">
+    <meta property="og:image" content="https://sosasoftcuba.github.io/base_consultora_uo/imagen/logo.png">
+
+    <!-- TWITTER CARD (Para X / Twitter) -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://sosasoftcuba.github.io/base_consultora_uo/">
+    <meta property="twitter:title" content="Consultora de Tesis | Universidad de Oriente">
+    <meta property="twitter:description" content="Explora el repositorio académico. Busca por título, autor, año o contenido dentro de las tesis.">
+    <meta property="twitter:image" content="https://sosasoftcuba.github.io/base_consultora_uo/imagen/logo.png">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -131,7 +149,7 @@
     <div id="loader-overlay">
         <div class="spinner"></div>
         <div class="loader-title">Descargando datos de tesis</div>
-        <div class="loader-text" id="loader-status">Verificando actualizaciones...</div>
+        <div class="loader-text" id="loader-status">Iniciando...</div>
         <div class="progress-container">
             <div id="progress-bar"></div>
         </div>
@@ -156,7 +174,7 @@
 
     <main>
         <div id="error-panel" class="panel">
-            <h3>Error Crítico: Faltan los datos de las tesis</h3>
+            <h3>🚨 Error Crítico: Faltan los datos de las tesis</h3>
             <p>No se pudo cargar la base de datos. El buscador no funcionará.</p>
             <div id="error-instructions"></div>
         </div>
@@ -218,12 +236,14 @@
     </footer>
 
     <script>
-        // 1. MOTOR DE CARGA CON CACHÉ (INDEXEDDB) Y VERIFICACIÓN DE VERSIÓN
+        // 1. VARIABLES GLOBALES
         let chunkIndex = 1;
         window.TESIS = [];
         const DB_NAME = 'ConsultoraDB';
         const STORE_NAME = 'chunks';
+        const isFileProtocol = window.location.protocol === 'file:';
 
+        // 2. FUNCIONES DE INDEXEDDB (Caché en memoria del teléfono)
         function openDB() {
             return new Promise((resolve, reject) => {
                 const request = indexedDB.open(DB_NAME, 1);
@@ -276,16 +296,54 @@
             } catch (e) {}
         }
 
+        // 3. LÓGICA DE CARGA (LOCAL vs INTERNET)
         async function iniciarDescarga() {
-            document.getElementById('loader-status').innerText = "Verificando actualizaciones en el servidor...";
+            const ua = navigator.userAgent;
+            const isAndroid = /Android/i.test(ua);
+            const browserName = /SamsungBrowser/i.test(ua) ? "Samsung Internet" :
+                                /Edg/i.test(ua) ? "Microsoft Edge" :
+                                /OPR|Opera/i.test(ua) ? "Opera" :
+                                /Firefox|FxiOS/i.test(ua) ? "Firefox" :
+                                /Chrome|CriOS/i.test(ua) ? "Chrome" : "Desconocido";
 
+            // A. MODO LOCAL (file://)
+            if (isFileProtocol) {
+                document.getElementById('loader-status').innerText = "Modo local: buscando datos en tu dispositivo...";
+                
+                if (isAndroid && browserName !== "Firefox") {
+                    document.getElementById('warn-panel').style.display = 'block';
+                    document.getElementById('warn-instructions').innerHTML = `
+                        <p>Estás abriendo el archivo directamente en <strong>${browserName}</strong> (Android). Este navegador bloquea la lectura de datos locales por seguridad.</p>
+                        <ul>
+                            <li><strong>Opción A:</strong> Abre esta misma carpeta usando <strong>Mozilla Firefox</strong>.</li>
+                            <li><strong>Opción B:</strong> Conéctate a internet y visita la versión web.</li>
+                        </ul>
+                    `;
+                }
+
+                const script = document.createElement('script');
+                script.src = 'index/datos_meta.js';
+                script.onload = () => {
+                    if (window.TOTAL_CHUNKS) {
+                        cargarChunksLocal();
+                    } else {
+                        mostrarErrorLocal();
+                    }
+                };
+                script.onerror = () => {
+                    mostrarErrorLocal();
+                };
+                document.body.appendChild(script);
+                return;
+            }
+
+            // B. MODO INTERNET (http/https)
+            document.getElementById('loader-status').innerText = "Verificando actualizaciones en el servidor...";
             try {
-                // Pedir el meta fresco al servidor desde la carpeta index
                 const res = await fetch('index/datos_meta.js?t=' + Date.now());
                 if (!res.ok) throw new Error("No meta");
                 
                 const metaText = await res.text();
-                
                 const scriptMeta = document.createElement('script');
                 scriptMeta.textContent = metaText;
                 document.body.appendChild(scriptMeta);
@@ -300,18 +358,40 @@
                     await clearStore(); 
                     await saveChunk('version', serverVersion);
                 }
-                
             } catch (e) {
                 console.log("Error verificando actualización, intentando caché offline.");
             }
-
-            cargarChunks();
+            cargarChunksInternet();
         }
 
-        async function cargarChunks() {
+        // 4. CARGA LOCAL (Solo para file://)
+        function cargarChunksLocal() {
             const total = window.TOTAL_CHUNKS || '?';
+            document.getElementById('loader-status').innerText = `Cargando index ${chunkIndex} de ${total}...`;
             
-            // TEXTO EXACTO CAMBIADO AQUÍ
+            let progress = Math.min((chunkIndex / window.TOTAL_CHUNKS) * 100, 99);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            if (chunkIndex > window.TOTAL_CHUNKS) {
+                finalizarCarga();
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = `index/datos_${chunkIndex}.js`;
+            script.onload = () => {
+                chunkIndex++;
+                cargarChunksLocal();
+            };
+            script.onerror = () => {
+                mostrarErrorLocal();
+            };
+            document.body.appendChild(script);
+        }
+
+        // 5. CARGA INTERNET (http/https)
+        async function cargarChunksInternet() {
+            const total = window.TOTAL_CHUNKS || '?';
             document.getElementById('loader-status').innerText = `Cargando index ${chunkIndex} de ${total}...`;
 
             let progress = window.TOTAL_CHUNKS 
@@ -328,9 +408,8 @@
                 document.body.appendChild(script);
                 
                 chunkIndex++;
-                setTimeout(cargarChunks, 10);
+                setTimeout(cargarChunksInternet, 10);
             } else {
-                // Descargar desde la carpeta index/
                 fetch(`index/datos_${chunkIndex}.js`)
                     .then(res => {
                         if (!res.ok) throw new Error("404");
@@ -342,7 +421,7 @@
                         script.textContent = text;
                         document.body.appendChild(script);
                         chunkIndex++;
-                        cargarChunks();
+                        cargarChunksInternet();
                     })
                     .catch(err => {
                         finalizarCarga();
@@ -350,6 +429,7 @@
             }
         }
 
+        // 6. FINALIZAR Y MOSTRAR ERROR
         function finalizarCarga() {
             document.getElementById('progress-bar').style.width = '100%';
             document.getElementById('loader-status').innerText = '¡Datos listos! Iniciando buscador...';
@@ -360,7 +440,23 @@
             }, 500);
         }
 
-        // 2. LÓGICA DEL BUSCADOR
+        function mostrarErrorLocal() {
+            document.getElementById('loader-overlay').style.display = 'none';
+            const errorPanel = document.getElementById('error-panel');
+            errorPanel.style.display = 'block';
+            document.getElementById('search-section').style.display = 'none';
+            document.getElementById('hero-section').style.display = 'none';
+            document.getElementById('error-instructions').innerHTML = `
+                <p>No se pudieron cargar los datos desde el almacenamiento local.</p>
+                <ul>
+                    <li>Si estás en <strong>Android</strong>, el navegador puede estar bloqueando la lectura de archivos locales.</li>
+                    <li>Intenta abrir la carpeta usando <strong>Mozilla Firefox</strong>.</li>
+                    <li>O conéctate a internet y visita la versión web de la página.</li>
+                </ul>
+            `;
+        }
+
+        // 7. LÓGICA DEL BUSCADOR
         function initApp() {
             if (typeof window.TESIS === 'undefined' || window.TESIS.length === 0) {
                 document.getElementById('error-panel').style.display = 'block';
@@ -369,7 +465,6 @@
                 return;
             }
 
-            const errorPanel = document.getElementById('error-panel');
             const warnPanel = document.getElementById('warn-panel');
             const warnInstructions = document.getElementById('warn-instructions');
             const searchSection = document.getElementById('search-section');
@@ -394,8 +489,6 @@
             document.getElementById('year').textContent = new Date().getFullYear();
 
             const ua = navigator.userAgent;
-            const isFile = window.location.protocol === 'file:' || window.location.protocol === 'content:';
-
             let osName = "Desconocido";
             if (/Windows/i.test(ua)) osName = "Windows";
             else if (/Macintosh/i.test(ua) && !/Mobile/i.test(ua)) osName = "macOS";
@@ -415,24 +508,6 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                 Navegador: <strong>${browserName}</strong> desde <strong>${osName}</strong>
             `;
-
-            if (isFile) {
-                let showWarn = false;
-                let warnText = '';
-
-                if (osName === "Android" && browserName !== "Firefox") {
-                    showWarn = true;
-                    warnText = `<p>Estás usando <strong>${browserName}</strong> en Android. Este navegador bloquea PDFs locales.</p><ul><li><strong>Opción A:</strong> Usa Mozilla Firefox.</li><li><strong>Opción B:</strong> Usa un servidor local con Python.</li></ul>`;
-                } else if (browserName === "Safari") {
-                    showWarn = true;
-                    warnText = `<p>Estás usando <strong>Safari</strong>. Bloquea PDFs locales.</p><ul><li>Usa el script <code>server_http.py</code>.</li><li>O sube la carpeta a internet.</li></ul>`;
-                }
-
-                if (showWarn) {
-                    warnPanel.style.display = 'block';
-                    warnInstructions.innerHTML = warnText;
-                }
-            }
 
             const tesis = window.TESIS;
             const stopWords = ["de", "la", "el", "los", "las", "lo", "un", "una", "unos", "unas", "y", "o", "a", "en", "con", "por", "para", "del", "al", "que", "entre", "sin", "sobre", "tras", "ni", "e", "u", "es", "son", "como"];
@@ -495,7 +570,7 @@
                 itemsPagina.forEach(({ item }) => {
                     const rawSnippet = createSnippet(item.texto, searchTerms, normalizedQuery); 
                     let fuenteStr = item.fuente || 'Local';
-                    if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+                    if (!isFileProtocol) {
                         fuenteStr = "Internet"; 
                     }
 
@@ -620,7 +695,7 @@
             });
         }
 
-        // Iniciar el proceso
+        // 8. INICIO
         document.addEventListener('DOMContentLoaded', () => {
             iniciarDescarga();
         });

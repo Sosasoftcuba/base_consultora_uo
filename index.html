@@ -151,37 +151,39 @@
         .card-title a:hover { text-decoration: underline; }
         
         .source-tag {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            background-color: var(--bg-page);
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            margin-right: 0.5rem;
-            border: 1px solid var(--border);
-            display: inline-block;
-            margin-bottom: 0.5rem;
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
+            color: var(--text-muted); background-color: var(--bg-page);
+            padding: 0.2rem 0.6rem; border-radius: 4px; margin-right: 0.5rem;
+            border: 1px solid var(--border); display: inline-block; margin-bottom: 0.5rem;
         }
 
-        /* Párrafo ampliado a 8 líneas */
         .card-text { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 8; -webkit-box-orient: vertical; overflow: hidden; }
         .card-text mark { background-color: var(--highlight); color: #854d0e; padding: 0.1em 0.2em; border-radius: 3px; font-weight: 500; }
 
         .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1rem; flex-wrap: wrap; gap: 1rem; }
         
         .info-tag {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            background-color: #f1f5f9;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            border: 1px dashed #cbd5e1;
-            font-weight: 500;
+            font-size: 0.8rem; color: var(--text-muted); background-color: #f1f5f9;
+            padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px dashed #cbd5e1; font-weight: 500;
         }
 
         .btn-open { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--primary); text-decoration: none; transition: color 0.2s; padding: 0.5rem 1rem; background-color: var(--primary-light); border-radius: 8px; }
         .btn-open:hover { background-color: #dbeafe; }
+
+        /* --- ESTILOS DE PAGINACIÓN --- */
+        .pagination {
+            display: flex; justify-content: center; align-items: center;
+            gap: 1.5rem; margin-top: 2.5rem; margin-bottom: 1rem; display: none;
+        }
+        .btn-page {
+            background-color: var(--surface); color: var(--primary);
+            border: 1px solid var(--primary); padding: 0.6rem 1.2rem;
+            border-radius: 8px; font-size: 0.95rem; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-page:hover:not(:disabled) { background-color: var(--primary); color: white; }
+        .btn-page:disabled { border-color: var(--border); color: var(--text-muted); cursor: not-allowed; background-color: var(--bg-page); }
+        .page-info { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
 
         footer { background-color: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; margin-top: auto; }
         .footer-content { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
@@ -195,18 +197,10 @@
         .footer-email:hover { text-decoration: underline; }
         .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
 
-        /* Estilo para el texto legal en el footer */
         .footer-legal {
-            width: 100%;
-            text-align: justify;
-            font-size: 0.85rem;
-            color: var(--text-main); 
-            background-color: #fafafa; 
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            line-height: 1.5;
+            width: 100%; text-align: justify; font-size: 0.85rem; color: var(--text-main); 
+            background-color: #fafafa; margin-top: 1rem; padding: 1rem;
+            border-radius: 8px; border: 1px solid var(--border); line-height: 1.5;
         }
         .footer-legal strong { color: #000000; } 
 
@@ -231,6 +225,7 @@
             .footer-left { flex-direction: column; text-align: center; gap: 0.5rem; }
             .footer-right { align-items: center; text-align: center; }
             .footer-legal { text-align: center; } 
+            .pagination { gap: 1rem; }
         }
     </style>
 </head>
@@ -285,6 +280,13 @@
 
         <div id="resultsInfo" class="results-info"></div>
         <div id="resultsList" class="results-list"></div>
+
+        <!-- Controles de Paginación -->
+        <div id="pagination" class="pagination">
+            <button id="prevBtn" class="btn-page">Anterior</button>
+            <span id="pageInfo" class="page-info">Página 1 de 1</span>
+            <button id="nextBtn" class="btn-page">Siguiente</button>
+        </div>
     </main>
 
     <footer>
@@ -329,6 +331,18 @@
             const resultsList = document.getElementById('resultsList');
             const resultsInfo = document.getElementById('resultsInfo');
             const envInfo = document.getElementById('env-info');
+
+            // Elementos de Paginación
+            const pagination = document.getElementById('pagination');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const pageInfo = document.getElementById('pageInfo');
+
+            // Variables de Paginación
+            const RESULTADOS_POR_PAGINA = 10;
+            let paginaActual = 1;
+            let totalPaginas = 1;
+            let resultadosFiltrados = []; // Guarda los resultados de la búsqueda actual
 
             document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -410,7 +424,6 @@
                 }
             }
 
-            const MAX_RESULTS = 50;
             const tesis = window.TESIS;
             const stopWords = ["de", "la", "el", "los", "las", "lo", "un", "una", "unos", "unas", "y", "o", "a", "en", "con", "por", "para", "del", "al", "que", "entre", "sin", "sobre", "tras", "ni", "e", "u", "es", "son", "como"];
 
@@ -446,71 +459,35 @@
                 }
                 if (firstMatchIndex === -1) return text.substring(0, 200) + '...';
 
-                // AMPLIADO A 200 ANTES Y 400 DESPUÉS
                 const start = Math.max(0, firstMatchIndex - 200);
                 const end = Math.min(text.length, firstMatchIndex + 400);
                 let snippet = text.substring(start, end);
                 return (start > 0 ? '...' : '') + snippet + (end < text.length ? '...' : '');
             };
 
-            const performSearch = () => {
-                const query = searchInput.value.trim();
-                if (query.length > 0) clearBtn.style.display = 'flex';
-                else {
-                    clearBtn.style.display = 'none';
-                    resultsList.innerHTML = '';
-                    resultsInfo.textContent = '';
-                    return;
-                }
-
-                const normalizedQuery = normalizeText(query);
-                const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
-                let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
-                if (searchTerms.length === 0) searchTerms = rawWords;
-
-                const termsToHighlight = [...new Set([normalizedQuery, ...searchTerms])].filter(t => t.length > 1);
-                const highlightRegex = buildHighlightRegex(termsToHighlight);
-
-                const results = [];
-                tesis.forEach(item => {
-                    let score = 0;
-                    const titleNorm = normalizeText(item.titulo);
-                    const textNorm = normalizeText(item.texto);
-                    let hasExactPhrase = false;
-
-                    // 1. Buscar frase exacta primero
-                    if (normalizedQuery.length > 2) {
-                        if (titleNorm.includes(normalizedQuery)) { score += 200; hasExactPhrase = true; }
-                        if (textNorm.includes(normalizedQuery)) { score += 100; hasExactPhrase = true; }
-                    }
-
-                    // 2. Luego separar por palabras clave
-                    let matchesAllKeyWords = true;
-                    searchTerms.forEach(term => {
-                        let termScore = 0;
-                        if (titleNorm.includes(term)) termScore += 50;
-                        const regex = new RegExp(escapeRegExp(term), 'g');
-                        termScore += Math.min((textNorm.match(regex) || []).length, 15);
-                        if (termScore === 0 && !hasExactPhrase) matchesAllKeyWords = false;
-                        score += termScore;
-                    });
-
-                    if ((matchesAllKeyWords || hasExactPhrase) && score > 0) results.push({ item, score });
-                });
-
-                results.sort((a, b) => b.score - a.score);
+            // --- NUEVA FUNCIÓN: RENDERIZAR PÁGINA ---
+            const renderizarPagina = (query, normalizedQuery, searchTerms, highlightRegex) => {
                 resultsList.innerHTML = '';
-                
-                if (results.length === 0) {
+
+                if (resultadosFiltrados.length === 0) {
                     resultsInfo.textContent = 'No se encontraron resultados.';
+                    pagination.style.display = 'none';
                     return;
                 }
 
-                resultsInfo.innerHTML = `Se encontraron <strong>${results.length}</strong> tesis para "<em>${escapeHTML(query)}</em>"`;
-                
-                results.slice(0, MAX_RESULTS).forEach(({ item }) => {
+                pagination.style.display = 'flex';
+                pageInfo.textContent = `Página ${paginaActual} de ${totalPaginas}`;
+                prevBtn.disabled = paginaActual === 1;
+                nextBtn.disabled = paginaActual === totalPaginas;
+
+                // Calcular el inicio y fin de la página
+                const inicio = (paginaActual - 1) * RESULTADOS_POR_PAGINA;
+                const fin = inicio + RESULTADOS_POR_PAGINA;
+                const itemsPagina = resultadosFiltrados.slice(inicio, fin);
+
+                // Dibujar las tarjetas
+                itemsPagina.forEach(({ item }) => {
                     const rawSnippet = createSnippet(item.texto, searchTerms, normalizedQuery); 
-                    
                     const fuenteStr = item.fuente || 'Local';
 
                     const card = document.createElement('article');
@@ -536,6 +513,98 @@
                     resultsList.appendChild(card);
                 });
             };
+
+            const performSearch = () => {
+                const query = searchInput.value.trim();
+                if (query.length > 0) clearBtn.style.display = 'flex';
+                else {
+                    clearBtn.style.display = 'none';
+                    resultsList.innerHTML = '';
+                    resultsInfo.textContent = '';
+                    pagination.style.display = 'none';
+                    return;
+                }
+
+                const normalizedQuery = normalizeText(query);
+                const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
+                let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
+                if (searchTerms.length === 0) searchTerms = rawWords;
+
+                const termsToHighlight = [...new Set([normalizedQuery, ...searchTerms])].filter(t => t.length > 1);
+                const highlightRegex = buildHighlightRegex(termsToHighlight);
+
+                // 1. Filtrar y puntuar
+                resultadosFiltrados = [];
+                tesis.forEach(item => {
+                    let score = 0;
+                    const titleNorm = normalizeText(item.titulo);
+                    const textNorm = normalizeText(item.texto);
+                    let hasExactPhrase = false;
+
+                    if (normalizedQuery.length > 2) {
+                        if (titleNorm.includes(normalizedQuery)) { score += 200; hasExactPhrase = true; }
+                        if (textNorm.includes(normalizedQuery)) { score += 100; hasExactPhrase = true; }
+                    }
+
+                    let matchesAllKeyWords = true;
+                    searchTerms.forEach(term => {
+                        let termScore = 0;
+                        if (titleNorm.includes(term)) termScore += 50;
+                        const regex = new RegExp(escapeRegExp(term), 'g');
+                        termScore += Math.min((textNorm.match(regex) || []).length, 15);
+                        if (termScore === 0 && !hasExactPhrase) matchesAllKeyWords = false;
+                        score += termScore;
+                    });
+
+                    if ((matchesAllKeyWords || hasExactPhrase) && score > 0) resultadosFiltrados.push({ item, score });
+                });
+
+                // 2. Ordenar
+                resultadosFiltrados.sort((a, b) => b.score - a.score);
+
+                // 3. Configurar paginación y renderizar
+                totalPaginas = Math.ceil(resultadosFiltrados.length / RESULTADOS_POR_PAGINA);
+                paginaActual = 1; 
+
+                if (resultadosFiltrados.length > 0) {
+                    resultsInfo.innerHTML = `Se encontraron <strong>${resultadosFiltrados.length}</strong> tesis para "<em>${escapeHTML(query)}</em>"`;
+                }
+
+                renderizarPagina(query, normalizedQuery, searchTerms, highlightRegex);
+            };
+
+            // --- EVENTOS DE PAGINACIÓN ---
+            prevBtn.addEventListener('click', () => {
+                if (paginaActual > 1) {
+                    paginaActual--;
+                    const query = searchInput.value.trim();
+                    const normalizedQuery = normalizeText(query);
+                    const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
+                    let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
+                    if (searchTerms.length === 0) searchTerms = rawWords;
+                    const termsToHighlight = [...new Set([normalizedQuery, ...searchTerms])].filter(t => t.length > 1);
+                    const highlightRegex = buildHighlightRegex(termsToHighlight);
+                    
+                    renderizarPagina(query, normalizedQuery, searchTerms, highlightRegex);
+                    window.scrollTo({ top: searchSection.offsetTop - 20, behavior: 'smooth' });
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (paginaActual < totalPaginas) {
+                    paginaActual++;
+                    const query = searchInput.value.trim();
+                    const normalizedQuery = normalizeText(query);
+                    const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
+                    let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
+                    if (searchTerms.length === 0) searchTerms = rawWords;
+                    const termsToHighlight = [...new Set([normalizedQuery, ...searchTerms])].filter(t => t.length > 1);
+                    const highlightRegex = buildHighlightRegex(termsToHighlight);
+                    
+                    renderizarPagina(query, normalizedQuery, searchTerms, highlightRegex);
+                    window.scrollTo({ top: searchSection.offsetTop - 20, behavior: 'smooth' });
+                }
+            });
 
             let debounceTimer;
             searchInput.addEventListener('input', () => {

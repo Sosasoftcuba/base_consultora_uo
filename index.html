@@ -120,7 +120,20 @@
         .footer-email { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
         .footer-copy { font-size: 0.85rem; color: var(--text-muted); }
         
-        .footer-legal { width: 100%; text-align: justify; font-size: 0.9rem; color: var(--text-main); background-color: #fafafa; margin-top: 1rem; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); line-height: 1.5; }
+        /* Texto legal justificado */
+        .footer-legal { 
+            width: 100%; 
+            text-align: justify; 
+            font-size: 0.9rem; 
+            color: var(--text-main); 
+            background-color: #fafafa; 
+            margin-top: 1rem; 
+            padding: 1rem; 
+            border-radius: 8px; 
+            border: 1px solid var(--border); 
+            line-height: 1.6; 
+            hyphens: auto;
+        }
         
         .stats-container { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
         .stat-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
@@ -163,7 +176,7 @@
             .card { padding: 1.25rem; }
             .card-title { font-size: 1.3rem; }
             .source-tag { font-size: 1rem; }
-            .card-text { font-size: 1.05rem; -webkit-line-clamp: 15; line-height: 1.7; } /* Más grande y con más líneas */
+            .card-text { font-size: 1.05rem; -webkit-line-clamp: 15; line-height: 1.7; } 
             .info-tag { font-size: 0.95rem; margin-bottom: 0.5rem; display: block; }
             .btn-open { font-size: 1.05rem; justify-content: center; width: 100%; padding: 0.5rem; background-color: var(--primary-light); border-radius: 6px; text-decoration: none; }
             
@@ -180,7 +193,7 @@
             .footer-copy { font-size: 0.95rem; }
             
             /* Textos legales y stats adaptados */
-            .footer-legal { font-size: 1rem; padding: 1.25rem; text-align: left; line-height: 1.6; }
+            .footer-legal { font-size: 1rem; padding: 1.25rem; text-align: justify; line-height: 1.6; }
             .stats-container { flex-direction: column; gap: 0.8rem; align-items: center; }
             .stat-item { font-size: 1rem; }
             
@@ -194,9 +207,8 @@
     <div id="loader-overlay">
         <div class="spinner"></div>
         <div class="loader-title">
-            Sincronizando Datos.<br><br>
-            Esto puede tardar varios minutos en<br>
-            dependencia de su velocidad de conexión ...
+            Sincronizando Datos...<br><br>
+            La velocidad de carga dependerá de su velocidad de conexión
         </div>
         <div class="loader-text" id="loader-status">Iniciando...</div>
         <div class="progress-container">
@@ -300,7 +312,7 @@
                 <span id="last-update">Verificando fecha de actualización...</span>
             </div>
 
-            <!-- TEXTO LEGAL -->
+            <!-- TEXTO LEGAL (JUSTIFICADO) -->
             <div class="footer-legal">
                 El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
             </div>
@@ -494,10 +506,10 @@
             document.body.appendChild(script);
         }
 
-        // --- 5. CARGA INTERNET OPTIMIZADA EN PARALELO (NUEVO) ---
+        // --- CARGA INTERNET OPTIMIZADA EN PARALELO ---
         async function cargarChunksInternet() {
             const total = window.TOTAL_CHUNKS || 55;
-            const BATCH_SIZE = 5; // Descargar 5 bloques a la vez
+            const BATCH_SIZE = 5; 
             let completados = 0;
             
             if (chunkIndex > total) {

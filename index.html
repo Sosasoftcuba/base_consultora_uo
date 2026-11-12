@@ -557,7 +557,7 @@
             `;
         }
 
-        // --- LÓGICA DEL BUSCADOR (JERARQUÍA DE MODIFICADOR ABSOLUTA) ---
+        // --- LÓGICA DEL BUSCADOR (ALGORITMO DE RAREZA Y JERARQUÍA) ---
         function initApp() {
             if (typeof window.TESIS === 'undefined' || window.TESIS.length === 0) {
                 document.getElementById('error-panel').style.display = 'block';
@@ -582,7 +582,7 @@
             let paginaActual = 1;
             let totalPaginas = 1;
             let resultadosFiltrados = [];
-            let currentModifierForSnippet = null;
+            let globalModifier = null; // Guardamos el modificador global para el snippet
 
             document.querySelectorAll('.current-year').forEach(el => el.textContent = new Date().getFullYear());
 
@@ -636,8 +636,8 @@
                 return regex ? highlighted.replace(regex, '<mark>$1</mark>') : highlighted;
             };
 
-            // --- NUEVA FUNCIÓN DE SNIPPET QUE PRIORIZA EL MODIFICADOR ---
-            const createSnippet = (text, searchTerms, exactPhrase, modifierWord) => {
+            // --- SNIPPET QUE PRIORIZA EL MODIFICADOR GLOBAL ---
+            const createSnippet = (text, searchTerms, exactPhrase) => {
                 const normalizedText = normalizeText(text);
                 let firstMatchIndex = -1;
 
@@ -647,9 +647,9 @@
                     if (idx !== -1) firstMatchIndex = idx;
                 }
 
-                // 2. Si no hay frase exacta, buscar obligatoriamente el MODIFICADOR (ej. multigrado)
-                if (firstMatchIndex === -1 && modifierWord) {
-                    const modVariations = getStemVariations(modifierWord);
+                // 2. Si no hay frase exacta, buscar obligatoriamente el MODIFICADOR (la palabra más rara)
+                if (firstMatchIndex === -1 && globalModifier) {
+                    const modVariations = getStemVariations(globalModifier);
                     for (const m of modVariations) {
                         const idx = normalizedText.indexOf(m);
                         if (idx !== -1) { firstMatchIndex = idx; break; }
@@ -690,7 +690,7 @@
                 const itemsPagina = resultadosFiltrados.slice(inicio, fin);
 
                 itemsPagina.forEach(({ item }) => {
-                    const rawSnippet = createSnippet(item.texto, searchTerms, normalizedQuery, currentModifierForSnippet); 
+                    const rawSnippet = createSnippet(item.texto, searchTerms, normalizedQuery); 
                     let fuenteStr = item.fuente || 'Local';
                     if (!isFileProtocol) { fuenteStr = "Internet"; }
 
@@ -735,36 +735,34 @@
                 let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
                 if (searchTerms.length === 0) searchTerms = rawWords;
 
-                // --- ASIGNACIÓN DE ROLES (Sustantivo vs Modificador) ---
-                let modifierWord = null;
-                let baseWords = [];
-
-                if (searchTerms.length > 1) {
-                    modifierWord = searchTerms[searchTerms.length - 1]; // La última palabra es el modificador
-                    baseWords = searchTerms.slice(0, searchTerms.length - 1); 
-                } else {
-                    baseWords = searchTerms;
-                }
+                // --- 1. CALCULAR LA RAREZA DE CADA PALABRA (Frecuencia Global) ---
+                let docFreq = {};
+                searchTerms.forEach(t => docFreq[t] = 0);
                 
-                currentModifierForSnippet = modifierWord; // Guardamos para el snippet
-
-                const modifierVariations = modifierWord ? getStemVariations(modifierWord) : [];
-                let baseVariations = [];
-                baseWords.forEach(w => baseVariations.push(...getStemVariations(w)));
-                baseVariations = [...new Set(baseVariations)];
-
-                let exactPhrases = [];
-                if (modifierWord) {
-                    baseVariations.forEach(b => {
-                        modifierVariations.forEach(m => {
-                            exactPhrases.push(`${b} ${m}`);
-                        });
+                tesis.forEach(item => {
+                    const textNorm = normalizeText(item.titulo + " " + item.texto);
+                    searchTerms.forEach(term => {
+                        const variations = getStemVariations(term);
+                        if (variations.some(v => textNorm.includes(v))) {
+                            docFreq[term]++;
+                        }
                     });
-                } else {
-                    exactPhrases.push(normalizedQuery);
+                });
+
+                // Ordenar términos por rareza (el menor docFreq va primero)
+                const sortedTerms = [...searchTerms].sort((a, b) => docFreq[a] - docFreq[b]);
+                
+                globalModifier = sortedTerms[0]; // La palabra más rara es el modificador
+                let baseNoun = sortedTerms[sortedTerms.length - 1]; // La más común es el sustantivo
+
+                // --- 2. GENERAR FRASES EXACTAS (En cualquier orden) ---
+                let exactPhrases = [normalizedQuery];
+                if (searchTerms.length > 1) {
+                    exactPhrases.push(searchTerms.join(' '));
+                    exactPhrases.push([...searchTerms].reverse().join(' '));
                 }
 
-                const termsToHighlight = [...new Set([...exactPhrases, ...modifierVariations, ...baseVariations])].filter(t => t.length > 1);
+                const termsToHighlight = [...new Set([...exactPhrases, ...searchTerms])].filter(t => t.length > 1);
                 const highlightRegex = buildHighlightRegex(termsToHighlight);
 
                 resultadosFiltrados = [];
@@ -777,37 +775,40 @@
                     let hasModifier = false;
                     let hasBase = false;
 
-                    // 1. FRASE EXACTA (Prioridad Máxima)
+                    // 3. PUNTUACIÓN JERÁRQUICA
+                    
+                    // Nivel 1: Frase Exacta (máxima prioridad)
                     exactPhrases.forEach(phrase => {
-                        if (titleNorm.includes(phrase)) { score += 5000000; hasExact = true; }
-                        if (textNorm.includes(phrase)) { score += 3000000; hasExact = true; }
+                        const regexPhrase = new RegExp(escapeRegExp(phrase), 'g');
+                        const occTitle = (titleNorm.match(regexPhrase) || []).length;
+                        const occText = (textNorm.match(regexPhrase) || []).length;
+                        if (occTitle > 0) { score += 10000000 + (occTitle * 1000); hasExact = true; }
+                        if (occText > 0) { score += 5000000 + (occText * 1000); hasExact = true; }
                     });
 
-                    // 2. MODIFICADOR (Ej. "multigrado") - Prioridad Alta
-                    if (modifierWord) {
-                        modifierVariations.forEach(term => {
-                            if (titleNorm.includes(term)) { score += 1000000; hasModifier = true; }
-                            const regex = new RegExp(escapeRegExp(term), 'g');
-                            const occurrences = (textNorm.match(regex) || []).length;
-                            if (occurrences > 0) {
-                                score += Math.min(occurrences * 50000, 500000); // Gran peso
-                                hasModifier = true;
-                            }
+                    // Nivel 2: Modificador (La palabra más rara)
+                    if (globalModifier) {
+                        const modVariations = getStemVariations(globalModifier);
+                        modVariations.forEach(v => {
+                            const regexMod = new RegExp(escapeRegExp(v), 'g');
+                            const occTitle = (titleNorm.match(regexMod) || []).length;
+                            const occText = (textNorm.match(regexMod) || []).length;
+                            if (occTitle > 0) { score += 1000000 + (occTitle * 100); hasModifier = true; }
+                            if (occText > 0) { score += 500000 + (occText * 100); hasModifier = true; }
                         });
                     }
 
-                    // 3. SUSTANTIVO BASE (Ej. "escuela") - Prioridad Baja
-                    baseWords.forEach(bWord => {
-                        baseVariations.forEach(term => {
-                            if (titleNorm.includes(term)) { score += 1000; hasBase = true; }
-                            const regex = new RegExp(escapeRegExp(term), 'g');
-                            const occurrences = (textNorm.match(regex) || []).length;
-                            if (occurrences > 0) {
-                                score += Math.min(occurrences * 100, 5000); // Peso pequeño
-                                hasBase = true;
-                            }
+                    // Nivel 3: Sustantivo Base (La palabra más común)
+                    if (baseNoun) {
+                        const baseVariations = getStemVariations(baseNoun);
+                        baseVariations.forEach(v => {
+                            const regexBase = new RegExp(escapeRegExp(v), 'g');
+                            const occTitle = (titleNorm.match(regexBase) || []).length;
+                            const occText = (textNorm.match(regexBase) || []).length;
+                            if (occTitle > 0) { score += 10000 + occTitle; hasBase = true; }
+                            if (occText > 0) { score += 1000 + occText; hasBase = true; }
                         });
-                    });
+                    }
 
                     if (hasExact || hasModifier || hasBase) {
                         resultadosFiltrados.push({ item, score });
@@ -821,7 +822,7 @@
                 if (resultadosFiltrados.length > 0) {
                     resultsInfo.innerHTML = `Se encontraron <strong>${resultadosFiltrados.length}</strong> tesis para "<em>${escapeHTML(query)}</em>"`;
                 }
-                renderizarPagina(query, normalizedQuery, termsToHighlight, highlightRegex);
+                renderizarPagina(query, normalizedQuery, searchTerms, highlightRegex);
             };
 
             prevBtn.addEventListener('click', () => {
@@ -832,18 +833,16 @@
                     const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
                     let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
                     if (searchTerms.length === 0) searchTerms = rawWords;
-                    let modifierWord = searchTerms.length > 1 ? searchTerms[searchTerms.length - 1] : null;
-                    let baseWords = searchTerms.length > 1 ? searchTerms.slice(0, -1) : searchTerms;
-                    currentModifierForSnippet = modifierWord;
-
-                    let baseVariations = []; baseWords.forEach(w => baseVariations.push(...getStemVariations(w)));
-                    let modifierVariations = modifierWord ? getStemVariations(modifierWord) : [];
-                    let exactPhrases = [];
-                    if (modifierWord) { baseVariations.forEach(b => { modifierVariations.forEach(m => { exactPhrases.push(`${b} ${m}`); }); }); }
-                    const termsToHighlight = [...new Set([...exactPhrases, ...modifierVariations, ...baseVariations])].filter(t => t.length > 1);
+                    
+                    let exactPhrases = [normalizedQuery];
+                    if (searchTerms.length > 1) {
+                        exactPhrases.push(searchTerms.join(' '));
+                        exactPhrases.push([...searchTerms].reverse().join(' '));
+                    }
+                    const termsToHighlight = [...new Set([...exactPhrases, ...searchTerms])].filter(t => t.length > 1);
                     const highlightRegex = buildHighlightRegex(termsToHighlight);
                     
-                    renderizarPagina(query, normalizedQuery, termsToHighlight, highlightRegex);
+                    renderizarPagina(query, normalizedQuery, searchTerms, highlightRegex);
                     window.scrollTo({ top: searchSection.offsetTop - 20, behavior: 'smooth' });
                 }
             });
@@ -856,18 +855,16 @@
                     const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
                     let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
                     if (searchTerms.length === 0) searchTerms = rawWords;
-                    let modifierWord = searchTerms.length > 1 ? searchTerms[searchTerms.length - 1] : null;
-                    let baseWords = searchTerms.length > 1 ? searchTerms.slice(0, -1) : searchTerms;
-                    currentModifierForSnippet = modifierWord;
-
-                    let baseVariations = []; baseWords.forEach(w => baseVariations.push(...getStemVariations(w)));
-                    let modifierVariations = modifierWord ? getStemVariations(modifierWord) : [];
-                    let exactPhrases = [];
-                    if (modifierWord) { baseVariations.forEach(b => { modifierVariations.forEach(m => { exactPhrases.push(`${b} ${m}`); }); }); }
-                    const termsToHighlight = [...new Set([...exactPhrases, ...modifierVariations, ...baseVariations])].filter(t => t.length > 1);
+                    
+                    let exactPhrases = [normalizedQuery];
+                    if (searchTerms.length > 1) {
+                        exactPhrases.push(searchTerms.join(' '));
+                        exactPhrases.push([...searchTerms].reverse().join(' '));
+                    }
+                    const termsToHighlight = [...new Set([...exactPhrases, ...searchTerms])].filter(t => t.length > 1);
                     const highlightRegex = buildHighlightRegex(termsToHighlight);
                     
-                    renderizarPagina(query, normalizedQuery, termsToHighlight, highlightRegex);
+                    renderizarPagina(query, normalizedQuery, searchTerms, highlightRegex);
                     window.scrollTo({ top: searchSection.offsetTop - 20, behavior: 'smooth' });
                 }
             });

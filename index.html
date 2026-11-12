@@ -12,7 +12,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sosasoftcuba.github.io/base_consultora_uo/">
     <meta property="og:title" content="Consultora de Tesis | Universidad de Oriente">
-    <meta property="og:description" content="Repositorio Académico de la Universidad de Oriente. Facultad Ciencias de la Educación">
+    <meta property="og:description" content="Explora el repositorio académico. Busca por título, autor, año o contenido dentro de las tesis.">
     <meta property="og:image" content="https://sosasoftcuba.github.io/base_consultora_uo/imagen/logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -95,7 +95,7 @@
         
         .source-tag { font-size: 0.8rem; font-weight: bold; color: #000; display: inline-block; margin-bottom: 0.5rem; border-bottom: 1px solid #000; padding-bottom: 2px;}
         
-        /* PUNTO 3: 12 líneas en el texto de la tarjeta */
+        /* 12 líneas en el texto de la tarjeta */
         .card-text { font-size: 0.95rem; color: #000; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 12; -webkit-box-orient: vertical; overflow: hidden; }
         .card-text mark { background-color: var(--highlight); color: #000; font-weight: bold; }
         
@@ -247,7 +247,7 @@
                 </div>
             </div>
             
-            <!-- PUNTO 2: CONTADORES -->
+            <!-- CONTADORES -->
             <div class="stats-container">
                 <div class="stat-item">
                     Resumen Mensual:
@@ -260,12 +260,12 @@
                 </div>
             </div>
 
-            <!-- PUNTO 7: FECHA DE ACTUALIZACIÓN -->
+            <!-- FECHA DE ACTUALIZACIÓN -->
             <div style="width: 100%; text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
                 <span id="last-update">Verificando fecha de actualización...</span>
             </div>
 
-            <!-- ADVERTENCIA CORREGIDA -->
+            <!-- ADVERTENCIA -->
             <div class="footer-legal">
                 <strong>Advertencia:</strong>
                 El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
@@ -274,7 +274,7 @@
     </footer>
 
     <script>
-        // --- PUNTO 4: LÓGICA DE CONTADORES (ABACUS) ---
+        // --- LÓGICA DE CONTADORES (ABACUS) ---
         fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/visitas_web')
             .then(res => res.json())
             .then(data => { document.getElementById('visit-count').innerText = data.value; })
@@ -363,9 +363,8 @@
             document.getElementById('last-update').innerText = `Última actualización: ${day}/${month}/${year} a las ${hour}:${min}`;
         }
 
-        // --- PUNTO 5 y 6: LÓGICA DE CARGA ---
+        // --- LÓGICA DE CARGA ---
         async function iniciarDescarga() {
-            // Verificación de conexión
             if (!navigator.onLine) {
                 document.getElementById('loader-overlay').style.display = 'none';
                 const errorPanel = document.getElementById('error-panel');
@@ -387,7 +386,6 @@
                                 /Firefox|FxiOS/i.test(ua) ? "Firefox" :
                                 /Chrome|CriOS/i.test(ua) ? "Chrome" : "Desconocido";
 
-            // PUNTO 6: MODO LOCAL (file://)
             if (isFileProtocol) {
                 document.getElementById('loader-status').innerText = "Modo local: buscando datos en tu dispositivo...";
                 
@@ -418,7 +416,6 @@
                 return;
             }
 
-            // MODO INTERNET
             document.getElementById('loader-status').innerText = "Verificando actualizaciones en el servidor...";
             try {
                 const res = await fetch('index/datos_meta.js?t=' + Date.now());
@@ -463,39 +460,66 @@
             document.body.appendChild(script);
         }
 
+        // --- 5. CARGA INTERNET OPTIMIZADA EN PARALELO (NUEVO) ---
         async function cargarChunksInternet() {
-            const total = window.TOTAL_CHUNKS || '?';
-            document.getElementById('loader-status').innerText = `Cargando index ${chunkIndex} de ${total}...`;
-
-            let progress = window.TOTAL_CHUNKS 
-                ? Math.min((chunkIndex / window.TOTAL_CHUNKS) * 100, 99) 
-                : Math.min((chunkIndex / 40) * 100, 95);
+            const total = window.TOTAL_CHUNKS || 55;
+            const BATCH_SIZE = 5; // Descargar 5 bloques a la vez
+            let completados = 0;
             
-            document.getElementById('progress-bar').style.width = `${progress}%`;
-
-            if (chunkIndex > window.TOTAL_CHUNKS) { finalizarCarga(); return; }
-
-            let cachedCode = await getChunk(chunkIndex);
-
-            if (cachedCode) {
-                const script = document.createElement('script');
-                script.textContent = cachedCode;
-                document.body.appendChild(script);
-                chunkIndex++;
-                setTimeout(cargarChunksInternet, 10);
-            } else {
-                fetch(`index/datos_${chunkIndex}.js`)
-                    .then(res => { if (!res.ok) throw new Error("404"); return res.text(); })
-                    .then(async text => {
-                        await saveChunk(chunkIndex, text);
-                        const script = document.createElement('script');
-                        script.textContent = text;
-                        document.body.appendChild(script);
-                        chunkIndex++;
-                        cargarChunksInternet();
-                    })
-                    .catch(err => { finalizarCarga(); });
+            if (chunkIndex > total) {
+                finalizarCarga();
+                return;
             }
+
+            async function obtenerBloque(index) {
+                let cached = await getChunk(index);
+                let text = cached;
+                
+                if (!text) {
+                    const res = await fetch(`index/datos_${index}.js`);
+                    if (!res.ok) throw new Error("404");
+                    text = await res.text();
+                    await saveChunk(index, text);
+                }
+                
+                completados++;
+                let progress = Math.min((completados / total) * 100, 99);
+                document.getElementById('progress-bar').style.width = `${progress}%`;
+                document.getElementById('loader-status').innerText = `Descargando tesis: ${completados} de ${total}...`;
+                
+                return { index, text };
+            }
+
+            while (chunkIndex <= total) {
+                let lote = [];
+                for (let i = 0; i < BATCH_SIZE && chunkIndex <= total; i++) {
+                    lote.push(chunkIndex);
+                    chunkIndex++;
+                }
+
+                try {
+                    const resultados = await Promise.all(lote.map(idx => obtenerBloque(idx)));
+                    resultados.sort((a, b) => a.index - b.index).forEach(item => {
+                        const script = document.createElement('script');
+                        script.textContent = item.text;
+                        document.body.appendChild(script);
+                    });
+                } catch (err) {
+                    console.warn("Fallo en descarga paralela, cayendo a modo secuencial de respaldo", err);
+                    for (const idx of lote) {
+                        try {
+                            const item = await obtenerBloque(idx);
+                            const script = document.createElement('script');
+                            script.textContent = item.text;
+                            document.body.appendChild(script);
+                        } catch(e) {
+                            finalizarCarga();
+                            return;
+                        }
+                    }
+                }
+            }
+            finalizarCarga();
         }
 
         function finalizarCarga() {
@@ -518,7 +542,7 @@
             `;
         }
 
-        // --- PUNTO 7 y 8: LÓGICA DEL BUSCADOR ---
+        // --- LÓGICA DEL BUSCADOR ---
         function initApp() {
             if (typeof window.TESIS === 'undefined' || window.TESIS.length === 0) {
                 document.getElementById('error-panel').style.display = 'block';
@@ -539,7 +563,6 @@
             const nextBtn = document.getElementById('nextBtn');
             const pageInfo = document.getElementById('pageInfo');
 
-            // PUNTO 2: 8 resultados por página
             const RESULTADOS_POR_PAGINA = 8; 
             let paginaActual = 1;
             let totalPaginas = 1;
@@ -587,7 +610,6 @@
                 return regex ? highlighted.replace(regex, '<mark>$1</mark>') : highlighted;
             };
 
-            // PUNTO 3: 80 caracteres antes y 450 después
             const createSnippet = (text, searchTerms, exactPhrase) => {
                 const normalizedText = normalizeText(text);
                 let firstMatchIndex = -1;

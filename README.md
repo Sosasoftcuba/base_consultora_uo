@@ -1,3 +1,3 @@
-# Base Consultora de Tesis - Universidad de Oriente
-Base consultora de tesis de la Facultad: Ciencias de la Educación
-Universidad de Oriente, Cuba
+# Base Consultora de Tesis - Universidad de Oriente.
+Base Consultora de Tesis de la Facultad: Ciencias de la Educación, 
+Universidad de Oriente, Cuba.

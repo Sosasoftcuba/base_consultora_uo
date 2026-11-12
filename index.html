@@ -5,22 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultora de Tesis | Universidad de Oriente</title>
     
-    <!-- FAVICON (Icono de la pestaña y favoritos) -->
+    <!-- FAVICON -->
     <link rel="icon" type="image/png" href="imagen/favicon.png">
 
-    <!-- OPEN GRAPH (Para WhatsApp, Facebook, Telegram) -->
+    <!-- OPEN GRAPH -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sosasoftcuba.github.io/base_consultora_uo/">
     <meta property="og:title" content="Consultora de Tesis | Universidad de Oriente">
     <meta property="og:description" content="Explora el repositorio académico. Busca por título, autor, año o contenido dentro de las tesis.">
     <meta property="og:image" content="https://sosasoftcuba.github.io/base_consultora_uo/imagen/logo.png">
-
-    <!-- TWITTER CARD (Para X / Twitter) -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://sosasoftcuba.github.io/base_consultora_uo/">
-    <meta property="twitter:title" content="Consultora de Tesis | Universidad de Oriente">
-    <meta property="twitter:description" content="Explora el repositorio académico. Busca por título, autor, año o contenido dentro de las tesis.">
-    <meta property="twitter:image" content="https://sosasoftcuba.github.io/base_consultora_uo/imagen/logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,6 +61,7 @@
         .panel h3 { margin-bottom: 0.75rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
         .panel p { margin-bottom: 0.75rem; }
         .panel ul { margin-left: 1.5rem; margin-bottom: 0.75rem; }
+        .panel li { margin-bottom: 0.5rem; }
         .panel code { background-color: rgba(0,0,0,0.06); padding: 0.2rem 0.5rem; border-radius: 6px; font-family: monospace; font-weight: 600; }
         #error-panel { background-color: var(--alert-bg); border: 1px solid var(--alert-border); border-left: 5px solid var(--alert-border); color: var(--alert-text); }
         #warn-panel { background-color: var(--warn-bg); border: 1px solid var(--warn-border); border-left: 5px solid #f59e0b; color: var(--warn-text); }
@@ -89,25 +83,31 @@
         .results-info { font-size: 0.95rem; color: var(--text-main); margin-bottom: 1rem; font-weight: 500; }
         .results-list { display: flex; flex-direction: column; gap: 1rem; }
         
+        /* TARJETAS SIMPLES CON BORDES NEGROS FUERTES */
+        .card { 
+            background-color: var(--surface); 
+            border: 2px solid #000; 
+            border-radius: 4px; 
+            padding: 1.5rem; 
+        }
+        .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
+        .card-title a { color: var(--primary); text-decoration: underline; }
+        
+        .source-tag { font-size: 0.8rem; font-weight: bold; color: #000; display: inline-block; margin-bottom: 0.5rem; border-bottom: 1px solid #000; padding-bottom: 2px;}
+        
         /* PUNTO 3: 12 líneas en el texto de la tarjeta */
-        .card { background-color: var(--surface); border: 1px solid var(--border); border-left: 5px solid var(--primary); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow-sm); transition: transform 0.15s ease, box-shadow 0.15s ease; animation: fadeIn 0.3s ease-out; }
-        .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: #bfdbfe; }
-        .card-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.3; }
-        .card-title a { color: var(--primary); text-decoration: none; }
-        .card-title a:hover { text-decoration: underline; }
-        .source-tag { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); background-color: var(--bg-page); padding: 0.2rem 0.6rem; border-radius: 4px; margin-right: 0.5rem; border: 1px solid var(--border); display: inline-block; margin-bottom: 0.5rem; }
-        .card-text { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 12; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-text mark { background-color: var(--highlight); color: #854d0e; padding: 0.1em 0.2em; border-radius: 3px; font-weight: 500; }
-        .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border); padding-top: 1rem; flex-wrap: wrap; gap: 1rem; }
-        .info-tag { font-size: 0.8rem; color: var(--text-muted); background-color: #f1f5f9; padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px dashed #cbd5e1; font-weight: 500; }
-        .btn-open { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: 600; color: var(--primary); text-decoration: none; transition: color 0.2s; padding: 0.5rem 1rem; background-color: var(--primary-light); border-radius: 8px; }
-        .btn-open:hover { background-color: #dbeafe; }
+        .card-text { font-size: 0.95rem; color: #000; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 12; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-text mark { background-color: var(--highlight); color: #000; font-weight: bold; }
+        
+        .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #000; padding-top: 1rem; flex-wrap: wrap; gap: 1rem; }
+        .info-tag { font-size: 0.8rem; color: #555; }
+        .btn-open { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: bold; color: var(--primary); text-decoration: underline; }
 
         .pagination { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 2.5rem; margin-bottom: 1rem; display: none; }
-        .btn-page { background-color: var(--surface); color: var(--primary); border: 1px solid var(--primary); padding: 0.6rem 1.2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-page { background-color: var(--surface); color: var(--primary); border: 2px solid var(--primary); padding: 0.6rem 1.2rem; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
         .btn-page:hover:not(:disabled) { background-color: var(--primary); color: white; }
-        .btn-page:disabled { border-color: var(--border); color: var(--text-muted); cursor: not-allowed; background-color: var(--bg-page); }
-        .page-info { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .btn-page:disabled { border-color: #ccc; color: #999; cursor: not-allowed; }
+        .page-info { font-size: 1rem; font-weight: 700; color: var(--text-main); }
 
         footer { background-color: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; margin-top: auto; }
         .footer-content { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
@@ -120,46 +120,13 @@
         .footer-email { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
         .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
         
-        /* ESTILO DE LA ADVERTENCIA (Rojo y salto de línea) */
-        .footer-legal { 
-            width: 100%; 
-            text-align: justify; 
-            font-size: 0.85rem; 
-            color: var(--text-main); 
-            background-color: #fafafa; 
-            margin-top: 1rem; 
-            padding: 1rem; 
-            border-radius: 8px; 
-            border: 1px solid var(--border); 
-            line-height: 1.5; 
-        }
-        .footer-legal strong { 
-            color: #dc2626; 
-            display: block; 
-            margin-bottom: 4px; 
-            font-size: 0.95rem;
-        } 
+        .footer-legal { width: 100%; text-align: justify; font-size: 0.85rem; color: var(--text-main); background-color: #fafafa; margin-top: 1rem; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); line-height: 1.5; }
+        .footer-legal strong { color: #dc2626; display: block; margin-bottom: 4px; font-size: 0.95rem; } 
 
-        /* Contadores */
-        .stats-container { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
+        .stats-container { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
         .stat-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
         .stat-item strong { color: var(--primary); font-size: 1rem; }
 
-        /* PUNTO 1: Responsivo para horizontal en móviles (pantallas bajas) */
-        @media (max-height: 500px) {
-            header { position: relative; } 
-            .header-content { flex-direction: row; justify-content: center; padding: 0.5rem 1rem; }
-            .logo-img { height: 40px; }
-            .logo-subtitle { display: none; }
-            .env-badge { display: none; } 
-        }
-
-        /* Contadores */
-        .stats-container { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
-        .stat-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-        .stat-item strong { color: var(--primary); font-size: 1rem; }
-
-        /* PUNTO 1: Responsivo para horizontal en móviles (pantallas bajas) */
         @media (max-height: 500px) {
             header { position: relative; } 
             .header-content { flex-direction: row; justify-content: center; padding: 0.5rem 1rem; }
@@ -180,7 +147,7 @@
             .search-input { padding: 0.75rem 2.5rem 0.75rem 0.5rem; font-size: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
             .clear-btn { position: absolute; right: 1rem; top: 1rem; display: flex; }
             .btn-search { border-radius: 12px; padding: 0.85rem; width: 100%; }
-            .card { padding: 1.25rem; border-left-width: 4px; }
+            .card { padding: 1.25rem; }
             .card-footer { flex-direction: column; align-items: stretch; }
             .btn-open { justify-content: center; }
             .footer-content { flex-direction: column; justify-content: center; gap: 1.5rem; }
@@ -193,7 +160,6 @@
 </head>
 <body>
 
-    <!-- PANTALLA DE CARGA -->
     <div id="loader-overlay">
         <div class="spinner"></div>
         <div class="loader-title">Descargando datos de tesis</div>
@@ -222,7 +188,7 @@
 
     <main>
         <div id="error-panel" class="panel">
-            <h3>🚨 Error Crítico: Faltan los datos de las tesis</h3>
+            <h3>🚨 Error Crítico: Faltan los datos o no hay conexión</h3>
             <p>No se pudo cargar la base de datos. El buscador no funcionará.</p>
             <div id="error-instructions"></div>
         </div>
@@ -252,7 +218,6 @@
         <div id="resultsInfo" class="results-info"></div>
         <div id="resultsList" class="results-list"></div>
 
-        <!-- PUNTO 5: Texto de paginación acortado -->
         <div id="pagination" class="pagination">
             <button id="prevBtn" class="btn-page">Anterior</button>
             <span id="pageInfo" class="page-info">Pág. 1 de 1</span>
@@ -282,8 +247,7 @@
                 </div>
             </div>
             
-<<<<<<< HEAD
-            <!-- CONTADORES (SOLO VISITAS Y TESIS) -->
+            <!-- PUNTO 2: CONTADORES -->
             <div class="stats-container">
                 <div class="stat-item">
                     Resumen Mensual:
@@ -296,19 +260,12 @@
                 </div>
             </div>
 
-            <!-- ADVERTENCIA CORREGIDA (Rojo y salto) -->
-=======
-            <!-- PUNTO 2: CONTADORES DE VISITAS -->
-            <div class="stats-container">
-                <div class="stat-item">
-                    👁️ Visitas a la página: <strong id="visit-count">...</strong>
-                </div>
-                <div class="stat-item">
-                    📄 Tesis consultadas: <strong id="thesis-count">...</strong>
-                </div>
+            <!-- PUNTO 7: FECHA DE ACTUALIZACIÓN -->
+            <div style="width: 100%; text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+                <span id="last-update">Verificando fecha de actualización...</span>
             </div>
 
->>>>>>> 5b5e7cae14ff45c91ae9659e94e0b1a0516ecae1
+            <!-- ADVERTENCIA CORREGIDA -->
             <div class="footer-legal">
                 <strong>Advertencia:</strong>
                 El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
@@ -317,34 +274,17 @@
     </footer>
 
     <script>
-<<<<<<< HEAD
-        // --- LÓGICA DE CONTADORES (ABACUS - EL QUE FUNCIONA) ---
-        
-        // 1. Contador de visitas (se suma 1 cada vez que entran)
-=======
-        // --- LÓGICA DE CONTADORES (ABACUS - SERVICIO ESTABLE) ---
-        // Sumar 1 visita a la página
->>>>>>> 5b5e7cae14ff45c91ae9659e94e0b1a0516ecae1
+        // --- PUNTO 4: LÓGICA DE CONTADORES (ABACUS) ---
         fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/visitas_web')
             .then(res => res.json())
             .then(data => { document.getElementById('visit-count').innerText = data.value; })
             .catch(e => { document.getElementById('visit-count').innerText = 'N/D'; });
 
-<<<<<<< HEAD
-        // 2. Contador de tesis consultadas (solo lee)
-=======
-        // Leer el contador total de tesis consultadas
->>>>>>> 5b5e7cae14ff45c91ae9659e94e0b1a0516ecae1
         fetch('https://abacus.jasoncameron.dev/get/sosasoftcuba_uo/tesis_abiertas')
             .then(res => res.json())
             .then(data => { document.getElementById('thesis-count').innerText = data.value || 0; })
             .catch(e => { document.getElementById('thesis-count').innerText = 'N/D'; });
 
-<<<<<<< HEAD
-        // 3. Función para sumar 1 cuando se hace clic en "Leer documento"
-=======
-        // Función para sumar 1 cuando se hace clic en "Leer documento"
->>>>>>> 5b5e7cae14ff45c91ae9659e94e0b1a0516ecae1
         function registrarConsulta() {
             fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/tesis_abiertas')
                 .then(res => res.json())
@@ -352,14 +292,14 @@
                 .catch(e => {});
         }
 
-        // 1. VARIABLES GLOBALES
+        // --- VARIABLES GLOBALES ---
         let chunkIndex = 1;
         window.TESIS = [];
         const DB_NAME = 'ConsultoraDB';
         const STORE_NAME = 'chunks';
         const isFileProtocol = window.location.protocol === 'file:';
 
-        // 2. FUNCIONES DE INDEXEDDB (Caché en memoria del teléfono)
+        // --- FUNCIONES DE INDEXEDDB ---
         function openDB() {
             return new Promise((resolve, reject) => {
                 const request = indexedDB.open(DB_NAME, 1);
@@ -412,28 +352,54 @@
             } catch (e) {}
         }
 
-        // 3. LÓGICA DE CARGA (LOCAL vs INTERNET)
+        // --- FUNCIÓN PARA FORMATEAR LA FECHA ---
+        function mostrarFechaActualizacion(versionStr) {
+            if (!versionStr || versionStr.length !== 14) return;
+            const year = versionStr.substring(0,4);
+            const month = versionStr.substring(4,6);
+            const day = versionStr.substring(6,8);
+            const hour = versionStr.substring(8,10);
+            const min = versionStr.substring(10,12);
+            document.getElementById('last-update').innerText = `Última actualización: ${day}/${month}/${year} a las ${hour}:${min}`;
+        }
+
+        // --- PUNTO 5 y 6: LÓGICA DE CARGA ---
         async function iniciarDescarga() {
+            // Verificación de conexión
+            if (!navigator.onLine) {
+                document.getElementById('loader-overlay').style.display = 'none';
+                const errorPanel = document.getElementById('error-panel');
+                errorPanel.style.display = 'block';
+                document.getElementById('search-section').style.display = 'none';
+                document.getElementById('hero-section').style.display = 'none';
+                document.getElementById('error-instructions').innerHTML = `
+                    <p><strong>No hay conexión a internet.</strong></p>
+                    <p>Si deseas buscar sin internet, por favor utiliza la <strong>versión portable (carpeta local)</strong> de este proyecto.</p>
+                `;
+                return;
+            }
+
             const ua = navigator.userAgent;
             const isAndroid = /Android/i.test(ua);
             const browserName = /SamsungBrowser/i.test(ua) ? "Samsung Internet" :
                                 /Edg/i.test(ua) ? "Microsoft Edge" :
                                 /OPR|Opera/i.test(ua) ? "Opera" :
                                 /Firefox|FxiOS/i.test(ua) ? "Firefox" :
-                                /Chrome|CriOS/i.test(ua) ? "Chrome" : "#sosasoftcuba";
+                                /Chrome|CriOS/i.test(ua) ? "Chrome" : "Desconocido";
 
-            // A. MODO LOCAL (file://)
+            // PUNTO 6: MODO LOCAL (file://)
             if (isFileProtocol) {
                 document.getElementById('loader-status').innerText = "Modo local: buscando datos en tu dispositivo...";
                 
                 if (isAndroid && browserName !== "Firefox") {
                     document.getElementById('warn-panel').style.display = 'block';
                     document.getElementById('warn-instructions').innerHTML = `
-                        <p>Estás abriendo el archivo directamente en <strong>${browserName}</strong> (Android). Este navegador bloquea la lectura de datos locales por seguridad.</p>
-                        <ul>
-                            <li><strong>Opción A:</strong> Abre esta misma carpeta usando <strong>Mozilla Firefox</strong>.</li>
-                            <li><strong>Opción B:</strong> Conéctate a internet y visita la versión web.</li>
-                        </ul>
+                        <p>Estás usando <strong>${browserName}</strong> en Android. Este navegador bloquea la lectura de archivos locales por seguridad.</p>
+                        <p><strong>Para solucionarlo, tienes 2 opciones:</strong></p>
+                        <ol>
+                            <li>Abre esta carpeta usando <strong>Mozilla Firefox</strong>.</li>
+                            <li>Instala una app de Servidor HTTP como <a href="https://play.google.com/store/search?q=http%20server%20python&c=apps" target="_blank" style="color:var(--primary); text-decoration:underline;">Simple HTTP Server</a> o <a href="https://play.google.com/store/apps/details?id=com.termux" target="_blank" style="color:var(--primary); text-decoration:underline;">Termux</a> desde Play Store para servir la carpeta.</li>
+                        </ol>
                     `;
                 }
 
@@ -441,19 +407,18 @@
                 script.src = 'index/datos_meta.js';
                 script.onload = () => {
                     if (window.TOTAL_CHUNKS) {
+                        if (window.DATA_VERSION) mostrarFechaActualizacion(window.DATA_VERSION);
                         cargarChunksLocal();
                     } else {
                         mostrarErrorLocal();
                     }
                 };
-                script.onerror = () => {
-                    mostrarErrorLocal();
-                };
+                script.onerror = () => { mostrarErrorLocal(); };
                 document.body.appendChild(script);
                 return;
             }
 
-            // B. MODO INTERNET (http/https)
+            // MODO INTERNET
             document.getElementById('loader-status').innerText = "Verificando actualizaciones en el servidor...";
             try {
                 const res = await fetch('index/datos_meta.js?t=' + Date.now());
@@ -465,6 +430,8 @@
                 document.body.appendChild(scriptMeta);
 
                 const serverVersion = window.DATA_VERSION;
+                if (serverVersion) mostrarFechaActualizacion(serverVersion);
+                
                 const cachedVersion = await getChunk('version');
 
                 if (serverVersion && cachedVersion === serverVersion) {
@@ -480,7 +447,6 @@
             cargarChunksInternet();
         }
 
-        // 4. CARGA LOCAL (Solo para file://)
         function cargarChunksLocal() {
             const total = window.TOTAL_CHUNKS || '?';
             document.getElementById('loader-status').innerText = `Cargando index ${chunkIndex} de ${total}...`;
@@ -488,24 +454,15 @@
             let progress = Math.min((chunkIndex / window.TOTAL_CHUNKS) * 100, 99);
             document.getElementById('progress-bar').style.width = `${progress}%`;
 
-            if (chunkIndex > window.TOTAL_CHUNKS) {
-                finalizarCarga();
-                return;
-            }
+            if (chunkIndex > window.TOTAL_CHUNKS) { finalizarCarga(); return; }
 
             const script = document.createElement('script');
             script.src = `index/datos_${chunkIndex}.js`;
-            script.onload = () => {
-                chunkIndex++;
-                cargarChunksLocal();
-            };
-            script.onerror = () => {
-                mostrarErrorLocal();
-            };
+            script.onload = () => { chunkIndex++; cargarChunksLocal(); };
+            script.onerror = () => { mostrarErrorLocal(); };
             document.body.appendChild(script);
         }
 
-        // 5. CARGA INTERNET (http/https)
         async function cargarChunksInternet() {
             const total = window.TOTAL_CHUNKS || '?';
             document.getElementById('loader-status').innerText = `Cargando index ${chunkIndex} de ${total}...`;
@@ -516,10 +473,7 @@
             
             document.getElementById('progress-bar').style.width = `${progress}%`;
 
-            if (chunkIndex > window.TOTAL_CHUNKS) {
-                finalizarCarga();
-                return;
-            }
+            if (chunkIndex > window.TOTAL_CHUNKS) { finalizarCarga(); return; }
 
             let cachedCode = await getChunk(chunkIndex);
 
@@ -527,15 +481,11 @@
                 const script = document.createElement('script');
                 script.textContent = cachedCode;
                 document.body.appendChild(script);
-                
                 chunkIndex++;
                 setTimeout(cargarChunksInternet, 10);
             } else {
                 fetch(`index/datos_${chunkIndex}.js`)
-                    .then(res => {
-                        if (!res.ok) throw new Error("404");
-                        return res.text();
-                    })
+                    .then(res => { if (!res.ok) throw new Error("404"); return res.text(); })
                     .then(async text => {
                         await saveChunk(chunkIndex, text);
                         const script = document.createElement('script');
@@ -544,17 +494,13 @@
                         chunkIndex++;
                         cargarChunksInternet();
                     })
-                    .catch(err => {
-                        finalizarCarga();
-                    });
+                    .catch(err => { finalizarCarga(); });
             }
         }
 
-        // 6. FINALIZAR Y MOSTRAR ERROR
         function finalizarCarga() {
             document.getElementById('progress-bar').style.width = '100%';
             document.getElementById('loader-status').innerText = '¡Datos listos! Iniciando buscador...';
-            
             setTimeout(() => {
                 document.getElementById('loader-overlay').style.display = 'none';
                 initApp();
@@ -569,15 +515,10 @@
             document.getElementById('hero-section').style.display = 'none';
             document.getElementById('error-instructions').innerHTML = `
                 <p>No se pudieron cargar los datos desde el almacenamiento local.</p>
-                <ul>
-                    <li>Si estás en <strong>Android</strong>, el navegador puede estar bloqueando la lectura de archivos locales.</li>
-                    <li>Intenta abrir la carpeta usando <strong>Mozilla Firefox</strong>.</li>
-                    <li>O conéctate a internet y visita la versión web de la página.</li>
-                </ul>
             `;
         }
 
-        // 7. LÓGICA DEL BUSCADOR
+        // --- PUNTO 7 y 8: LÓGICA DEL BUSCADOR ---
         function initApp() {
             if (typeof window.TESIS === 'undefined' || window.TESIS.length === 0) {
                 document.getElementById('error-panel').style.display = 'block';
@@ -586,29 +527,24 @@
                 return;
             }
 
-            const warnPanel = document.getElementById('warn-panel');
-            const warnInstructions = document.getElementById('warn-instructions');
             const searchSection = document.getElementById('search-section');
-            const heroSection = document.getElementById('hero-section');
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
             const clearBtn = document.getElementById('clearBtn');
             const resultsList = document.getElementById('resultsList');
             const resultsInfo = document.getElementById('resultsInfo');
             const envInfo = document.getElementById('env-info');
-            
             const pagination = document.getElementById('pagination');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
             const pageInfo = document.getElementById('pageInfo');
 
-            // PUNTO 4: 8 resultados por página
+            // PUNTO 2: 8 resultados por página
             const RESULTADOS_POR_PAGINA = 8; 
             let paginaActual = 1;
             let totalPaginas = 1;
             let resultadosFiltrados = [];
 
-            // Actualizar todos los años
             document.querySelectorAll('.current-year').forEach(el => el.textContent = new Date().getFullYear());
 
             const ua = navigator.userAgent;
@@ -651,7 +587,7 @@
                 return regex ? highlighted.replace(regex, '<mark>$1</mark>') : highlighted;
             };
 
-            // PUNTO 3: 70 caracteres antes y 500 después
+            // PUNTO 3: 80 caracteres antes y 450 después
             const createSnippet = (text, searchTerms, exactPhrase) => {
                 const normalizedText = normalizeText(text);
                 let firstMatchIndex = -1;
@@ -668,8 +604,8 @@
                 }
                 if (firstMatchIndex === -1) return text.substring(0, 200) + '...';
 
-                const start = Math.max(0, firstMatchIndex - 70);
-                const end = Math.min(text.length, firstMatchIndex + 500);
+                const start = Math.max(0, firstMatchIndex - 80);
+                const end = Math.min(text.length, firstMatchIndex + 450);
                 let snippet = text.substring(start, end);
                 return (start > 0 ? '...' : '') + snippet + (end < text.length ? '...' : '');
             };
@@ -683,8 +619,6 @@
                 }
 
                 pagination.style.display = 'flex';
-                
-                // PUNTO 5: Texto "Pág. X de Y"
                 pageInfo.textContent = `Pág. ${paginaActual} de ${totalPaginas}`;
                 prevBtn.disabled = paginaActual === 1;
                 nextBtn.disabled = paginaActual === totalPaginas;
@@ -696,9 +630,7 @@
                 itemsPagina.forEach(({ item }) => {
                     const rawSnippet = createSnippet(item.texto, searchTerms, normalizedQuery); 
                     let fuenteStr = item.fuente || 'Local';
-                    if (!isFileProtocol) {
-                        fuenteStr = "Internet"; 
-                    }
+                    if (!isFileProtocol) { fuenteStr = "Internet"; }
 
                     const card = document.createElement('article');
                     card.className = 'card';
@@ -713,7 +645,7 @@
                         <p class="card-text">${highlightMatches(rawSnippet, highlightRegex)}</p>
                         <div class="card-footer">
                             <div class="info-tag">
-                                Resultado en las primeras 20,000 palabras. Debe consultar el PDF para ampliar la información.
+                                (Resultado en las primeras 20,000 palabras)
                             </div>
                             <a href="${item.archivo}" target="_blank" class="btn-open" onclick="registrarConsulta()">
                                 Leer documento
@@ -822,7 +754,6 @@
             });
         }
 
-        // 8. INICIO
         document.addEventListener('DOMContentLoaded', () => {
             iniciarDescarga();
         });

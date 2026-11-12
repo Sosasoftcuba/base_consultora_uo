@@ -120,7 +120,7 @@
         .footer-email { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
         .footer-copy { font-size: 0.85rem; color: var(--text-muted); }
         
-        /* Texto legal justificado */
+        /* Texto legal justificado y con "Advertencia" en rojo */
         .footer-legal { 
             width: 100%; 
             text-align: justify; 
@@ -134,6 +134,7 @@
             line-height: 1.6; 
             hyphens: auto;
         }
+        .footer-legal strong { color: #dc2626; display: block; margin-bottom: 4px; font-size: 0.95rem; } 
         
         .stats-container { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
         .stat-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
@@ -312,8 +313,9 @@
                 <span id="last-update">Verificando fecha de actualización...</span>
             </div>
 
-            <!-- TEXTO LEGAL (JUSTIFICADO) -->
+            <!-- TEXTO LEGAL CON LA PALABRA ADVERTENCIA EN ROJO Y JUSTIFICADO -->
             <div class="footer-legal">
+                <strong>Advertencia:</strong>
                 El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
             </div>
         </div>

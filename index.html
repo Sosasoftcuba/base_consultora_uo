@@ -162,7 +162,7 @@
 
     <div id="loader-overlay">
         <div class="spinner"></div>
-        <div class="loader-title">Descargando Datos ...</div>
+        <div class="loader-title">Sincronizando Datos. Esto puede tardar varios minutos en dependencia de su velocidad de conexión ...</div>
         <div class="loader-text" id="loader-status">Iniciando...</div>
         <div class="progress-container">
             <div id="progress-bar"></div>
@@ -485,7 +485,7 @@
                 completados++;
                 let progress = Math.min((completados / total) * 100, 99);
                 document.getElementById('progress-bar').style.width = `${progress}%`;
-                document.getElementById('loader-status').innerText = `Descargando tesis: ${completados} de ${total}...`;
+                document.getElementById('loader-status').innerText = `Descargando index: ${completados} de ${total}...`;
                 
                 return { index, text };
             }

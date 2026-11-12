@@ -28,7 +28,7 @@
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; font-size: 16px; }
 
         /* --- LOADER UI --- */
         #loader-overlay {
@@ -80,7 +80,7 @@
         .btn-search { background-color: var(--primary); color: white; border: none; border-radius: 40px; padding: 0 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
         .btn-search:hover { background-color: var(--primary-hover); }
 
-        .results-info { font-size: 0.95rem; color: var(--text-main); margin-bottom: 1rem; font-weight: 500; }
+        .results-info { font-size: 1rem; color: var(--text-main); margin-bottom: 1rem; font-weight: 500; }
         .results-list { display: flex; flex-direction: column; gap: 1rem; }
         
         /* TARJETAS SIMPLES CON BORDES NEGROS FUERTES */
@@ -93,15 +93,15 @@
         .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
         .card-title a { color: var(--primary); text-decoration: underline; }
         
-        .source-tag { font-size: 0.8rem; font-weight: bold; color: #000; display: inline-block; margin-bottom: 0.5rem; border-bottom: 1px solid #000; padding-bottom: 2px;}
+        .source-tag { font-size: 0.85rem; font-weight: bold; color: #000; display: inline-block; margin-bottom: 0.5rem; border-bottom: 1px solid #000; padding-bottom: 2px;}
         
         /* 12 líneas en el texto de la tarjeta */
-        .card-text { font-size: 0.95rem; color: #000; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 12; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-text { font-size: 0.95rem; color: #000; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 12; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.6; }
         .card-text mark { background-color: var(--highlight); color: #000; font-weight: bold; }
         
         .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #000; padding-top: 1rem; flex-wrap: wrap; gap: 1rem; }
-        .info-tag { font-size: 0.8rem; color: #555; }
-        .btn-open { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: bold; color: var(--primary); text-decoration: underline; }
+        .info-tag { font-size: 0.85rem; color: #555; }
+        .btn-open { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: bold; color: var(--primary); text-decoration: underline; }
 
         .pagination { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 2.5rem; margin-bottom: 1rem; display: none; }
         .btn-page { background-color: var(--surface); color: var(--primary); border: 2px solid var(--primary); padding: 0.6rem 1.2rem; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
@@ -115,17 +115,16 @@
         .footer-left img { height: 35px; width: auto; }
         .footer-brand { display: flex; flex-direction: column; line-height: 1.2; }
         .footer-brand-title { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
-        .footer-brand-sub { font-size: 0.8rem; color: var(--text-muted); }
+        .footer-brand-sub { font-size: 0.85rem; color: var(--text-muted); }
         .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; text-align: right; }
         .footer-email { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
-        .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
+        .footer-copy { font-size: 0.85rem; color: var(--text-muted); }
         
-        .footer-legal { width: 100%; text-align: justify; font-size: 0.85rem; color: var(--text-main); background-color: #fafafa; margin-top: 1rem; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); line-height: 1.5; }
-        .footer-legal strong { color: #dc2626; display: block; margin-bottom: 4px; font-size: 0.95rem; } 
-
+        .footer-legal { width: 100%; text-align: justify; font-size: 0.9rem; color: var(--text-main); background-color: #fafafa; margin-top: 1rem; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); line-height: 1.5; }
+        
         .stats-container { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
-        .stat-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
-        .stat-item strong { color: var(--primary); font-size: 1rem; }
+        .stat-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+        .stat-item strong { color: var(--primary); font-size: 1.1rem; }
 
         @media (max-height: 500px) {
             header { position: relative; } 
@@ -135,26 +134,58 @@
             .env-badge { display: none; } 
         }
 
+        /* --- AJUSTES PARA MÓVILES (PANTALLAS PEQUEÑAS) --- */
         @media (max-width: 768px) {
-            .header-content { flex-direction: column; text-align: center; gap: 1rem; }
+            .header-content { flex-direction: column; text-align: center; gap: 1rem; padding: 1rem; }
             .brand-group { flex-direction: column; gap: 0.5rem; }
             .separator { display: none; }
             .logo-img { height: 100px; max-width: 90%; }
-            .env-badge { white-space: normal; justify-content: center; width: 100%; max-width: 320px; }
+            
+            /* Textos más grandes en el header */
+            .logo-title { font-size: 1.4rem; }
+            .logo-subtitle { font-size: 1.1rem; }
+            
+            .env-badge { white-space: normal; justify-content: center; width: 100%; max-width: 350px; font-size: 1rem; padding: 0.75rem; }
+            
             main { padding: 2rem 1rem; }
-            .search-box { flex-direction: column; border-radius: 16px; padding: 0.75rem; }
+            
+            .hero h3 { font-size: 1.8rem; }
+            .hero p { font-size: 1.1rem; }
+            
+            .search-box { flex-direction: column; border-radius: 16px; padding: 0.75rem; gap: 10px; }
             .search-icon { display: none; }
-            .search-input { padding: 0.75rem 2.5rem 0.75rem 0.5rem; font-size: 1rem; border-bottom: 1px solid var(--border); margin-bottom: 1rem; }
-            .clear-btn { position: absolute; right: 1rem; top: 1rem; display: flex; }
-            .btn-search { border-radius: 12px; padding: 0.85rem; width: 100%; }
+            /* El input debe ser de 16px o más para evitar zoom en iOS */
+            .search-input { padding: 1rem; font-size: 1.1rem; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0; background-color: #f8fafc; }
+            .clear-btn { position: absolute; right: 1.5rem; top: 1.8rem; display: flex; }
+            .btn-search { border-radius: 8px; padding: 1rem; width: 100%; font-size: 1.1rem; }
+            
+            /* Tarjetas más legibles */
             .card { padding: 1.25rem; }
-            .card-footer { flex-direction: column; align-items: stretch; }
-            .btn-open { justify-content: center; }
-            .footer-content { flex-direction: column; justify-content: center; gap: 1.5rem; }
-            .footer-left { flex-direction: column; text-align: center; gap: 0.5rem; }
+            .card-title { font-size: 1.3rem; }
+            .source-tag { font-size: 1rem; }
+            .card-text { font-size: 1.05rem; -webkit-line-clamp: 15; line-height: 1.7; } /* Más grande y con más líneas */
+            .info-tag { font-size: 0.95rem; margin-bottom: 0.5rem; display: block; }
+            .btn-open { font-size: 1.05rem; justify-content: center; width: 100%; padding: 0.5rem; background-color: var(--primary-light); border-radius: 6px; text-decoration: none; }
+            
+            .pagination { gap: 1rem; flex-wrap: wrap; }
+            .btn-page { font-size: 1rem; padding: 0.8rem 1.2rem; }
+            .page-info { font-size: 1.1rem; width: 100%; text-align: center; }
+            
+            .footer-content { flex-direction: column; justify-content: center; gap: 1.5rem; text-align: center; }
+            .footer-left { flex-direction: column; gap: 0.5rem; }
+            .footer-brand-title { font-size: 1.2rem; }
+            .footer-brand-sub { font-size: 1rem; }
             .footer-right { align-items: center; text-align: center; }
-            .footer-legal { text-align: center; } 
-            .pagination { gap: 1rem; }
+            .footer-email { font-size: 1rem; justify-content: center; }
+            .footer-copy { font-size: 0.95rem; }
+            
+            /* Textos legales y stats adaptados */
+            .footer-legal { font-size: 1rem; padding: 1.25rem; text-align: left; line-height: 1.6; }
+            .stats-container { flex-direction: column; gap: 0.8rem; align-items: center; }
+            .stat-item { font-size: 1rem; }
+            
+            .loader-title { font-size: 1.3rem; }
+            .loader-text { font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -162,7 +193,11 @@
 
     <div id="loader-overlay">
         <div class="spinner"></div>
-        <div class="loader-title">Sincronizando Datos. Esto puede tardar varios minutos en dependencia de su velocidad de conexión ...</div>
+        <div class="loader-title">
+            Sincronizando Datos.<br><br>
+            Esto puede tardar varios minutos en<br>
+            dependencia de su velocidad de conexión ...
+        </div>
         <div class="loader-text" id="loader-status">Iniciando...</div>
         <div class="progress-container">
             <div id="progress-bar"></div>
@@ -175,8 +210,8 @@
                 <img src="imagen/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
                 <span class="separator">|</span>
                 <div class="logo-text">
-                    <span class="logo-title">Repositorio de Tesis Local</span>
-                    <span class="logo-subtitle">Facultad Ciencias de la Educación</span>
+                    <span class="logo-title">Repositorio de Tesis:</span>
+                    <span class="logo-subtitle">Facultad Ciencias de la Educación:</span>
                 </div>
             </div>
             <div class="env-badge" id="env-info">
@@ -230,8 +265,8 @@
             <div class="footer-left">
                 <img src="imagen/logo.png" alt="Logo" onerror="this.style.display='none'">
                 <div class="footer-brand">
-                    <span class="footer-brand-title">Consultora de Tesis</span>
-                    <span class="footer-brand-sub">Facultad Ciencias de la Educación</span>
+                    <span class="footer-brand-title">Repositorio de Tesis:</span>
+                    <span class="footer-brand-sub">Facultad Ciencias de la Educación:</span>
                 </div>
             </div>
             <div class="footer-right">
@@ -261,13 +296,12 @@
             </div>
 
             <!-- FECHA DE ACTUALIZACIÓN -->
-            <div style="width: 100%; text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+            <div style="width: 100%; text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-top: 10px;">
                 <span id="last-update">Verificando fecha de actualización...</span>
             </div>
 
-            <!-- ADVERTENCIA -->
+            <!-- TEXTO LEGAL -->
             <div class="footer-legal">
-                <strong>Advertencia:</strong>
                 El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
             </div>
         </div>

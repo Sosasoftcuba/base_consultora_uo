@@ -154,6 +154,20 @@
             .env-badge { display: none; } 
         }
 
+        /* Contadores */
+        .stats-container { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
+        .stat-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .stat-item strong { color: var(--primary); font-size: 1rem; }
+
+        /* PUNTO 1: Responsivo para horizontal en móviles (pantallas bajas) */
+        @media (max-height: 500px) {
+            header { position: relative; } 
+            .header-content { flex-direction: row; justify-content: center; padding: 0.5rem 1rem; }
+            .logo-img { height: 40px; }
+            .logo-subtitle { display: none; }
+            .env-badge { display: none; } 
+        }
+
         @media (max-width: 768px) {
             .header-content { flex-direction: column; text-align: center; gap: 1rem; }
             .brand-group { flex-direction: column; gap: 0.5rem; }
@@ -268,6 +282,7 @@
                 </div>
             </div>
             
+<<<<<<< HEAD
             <!-- CONTADORES (SOLO VISITAS Y TESIS) -->
             <div class="stats-container">
                 <div class="stat-item">
@@ -282,6 +297,18 @@
             </div>
 
             <!-- ADVERTENCIA CORREGIDA (Rojo y salto) -->
+=======
+            <!-- PUNTO 2: CONTADORES DE VISITAS -->
+            <div class="stats-container">
+                <div class="stat-item">
+                    👁️ Visitas a la página: <strong id="visit-count">...</strong>
+                </div>
+                <div class="stat-item">
+                    📄 Tesis consultadas: <strong id="thesis-count">...</strong>
+                </div>
+            </div>
+
+>>>>>>> 5b5e7cae14ff45c91ae9659e94e0b1a0516ecae1
             <div class="footer-legal">
                 <strong>Advertencia:</strong>
                 El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
@@ -290,21 +317,34 @@
     </footer>
 
     <script>
+<<<<<<< HEAD
         // --- LÓGICA DE CONTADORES (ABACUS - EL QUE FUNCIONA) ---
         
         // 1. Contador de visitas (se suma 1 cada vez que entran)
+=======
+        // --- LÓGICA DE CONTADORES (ABACUS - SERVICIO ESTABLE) ---
+        // Sumar 1 visita a la página
+>>>>>>> 5b5e7cae14ff45c91ae9659e94e0b1a0516ecae1
         fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/visitas_web')
             .then(res => res.json())
             .then(data => { document.getElementById('visit-count').innerText = data.value; })
             .catch(e => { document.getElementById('visit-count').innerText = 'N/D'; });
 
+<<<<<<< HEAD
         // 2. Contador de tesis consultadas (solo lee)
+=======
+        // Leer el contador total de tesis consultadas
+>>>>>>> 5b5e7cae14ff45c91ae9659e94e0b1a0516ecae1
         fetch('https://abacus.jasoncameron.dev/get/sosasoftcuba_uo/tesis_abiertas')
             .then(res => res.json())
             .then(data => { document.getElementById('thesis-count').innerText = data.value || 0; })
             .catch(e => { document.getElementById('thesis-count').innerText = 'N/D'; });
 
+<<<<<<< HEAD
         // 3. Función para sumar 1 cuando se hace clic en "Leer documento"
+=======
+        // Función para sumar 1 cuando se hace clic en "Leer documento"
+>>>>>>> 5b5e7cae14ff45c91ae9659e94e0b1a0516ecae1
         function registrarConsulta() {
             fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/tesis_abiertas')
                 .then(res => res.json())

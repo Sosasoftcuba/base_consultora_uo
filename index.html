@@ -24,11 +24,23 @@
             --primary-hover: #1e40af; --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
             --alert-bg: #fef2f2; --alert-border: #f87171; --alert-text: #991b1b;
             --warn-bg: #fffbeb; --warn-border: #fcd34d; --warn-text: #92400e;
+            --ok-bg: #ecfdf5; --ok-border: #10b981; --ok-text: #065f46;
             --highlight: #fef08a; --radius: 12px; --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+        /* --- ANIMACIÓN BOTÓN PARPADEANTE (Alerta de actualización) --- */
+        @keyframes blinker {
+            50% { opacity: 0.3; }
+        }
+        .blink {
+            animation: blinker 1s linear infinite;
+            background-color: #f59e0b !important;
+            color: white !important;
+            border-color: #f59e0b !important;
+        }
 
         /* --- LOADER UI --- */
         #loader-overlay {
@@ -44,10 +56,27 @@
         .progress-container { width: 100%; max-width: 300px; height: 8px; background: var(--border); border-radius: 4px; margin-top: 20px; overflow: hidden; }
         #progress-bar { height: 100%; width: 0%; background: var(--primary); transition: width 0.2s ease; }
 
+        /* --- MODAL ACTUALIZACIÓN --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); z-index: 10000; justify-content: center; align-items: center; padding: 20px;
+        }
+        .modal-content {
+            background: var(--surface); padding: 25px; border-radius: var(--radius); max-width: 500px;
+            width: 100%; text-align: center; box-shadow: var(--shadow-lg); border: 2px solid #000;
+        }
+        .modal-title { color: var(--primary); margin-bottom: 15px; font-size: 1.4rem; font-weight: 700; }
+        .modal-text { margin-bottom: 20px; text-align: left; line-height: 1.5; color: var(--text-main); font-size: 1rem; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .modal-buttons .btn-search, .modal-buttons .btn-page { width: 100%; margin-bottom: 10px; }
+        .msg-box { display: none; margin-top: 15px; padding: 10px; text-align: left; font-size: 0.9em; border-radius: 4px; }
+        #msg-downloaded { background: var(--ok-bg); border-left: 4px solid var(--ok-border); color: var(--ok-text); }
+        #msg-skipped { background: var(--warn-bg); border-left: 4px solid var(--warn-border); color: var(--warn-text); }
+
         /* --- HEADER --- */
         header { background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 0; position: sticky; top: 0; z-index: 10; box-shadow: var(--shadow-sm); }
         .header-content { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
-        .brand-group { display: flex; align-items: center; gap: 1rem; }
+        .brand-group { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
         .logo-img { height: 55px; width: auto; object-fit: contain; color: transparent; }
         .separator { font-size: 2rem; font-weight: 300; color: var(--border); line-height: 1; }
         .logo-text { display: flex; flex-direction: column; line-height: 1.3; }
@@ -77,34 +106,19 @@
         .search-icon { display: flex; align-items: center; padding-left: 1rem; color: var(--text-muted); }
         .search-input { flex: 1; border: none; background: transparent; padding: 0.75rem 1rem; font-size: 1.1rem; color: var(--text-main); outline: none; font-family: inherit; width: 100%; }
         .clear-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 0 0.5rem; display: none; align-items: center; }
-        .btn-search { background-color: var(--primary); color: white; border: none; border-radius: 40px; padding: 0 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; }
+        .btn-search { background-color: var(--primary); color: white; border: none; border-radius: 40px; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; text-decoration: none; text-align: center; display: inline-block;}
         .btn-search:hover { background-color: var(--primary-hover); }
 
         .results-info { font-size: 0.95rem; color: var(--text-main); margin-bottom: 1rem; font-weight: 500; }
         .results-list { display: flex; flex-direction: column; gap: 1rem; }
         
         /* TARJETAS SIMPLES CON BORDES NEGROS FUERTES */
-        .card { 
-            background-color: var(--surface); 
-            border: 2px solid #000; 
-            border-radius: 4px; 
-            padding: 1.5rem; 
-        }
+        .card { background-color: var(--surface); border: 2px solid #000; border-radius: 4px; padding: 1.5rem; }
         .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
         .card-title a { color: var(--primary); text-decoration: underline; }
-        
         .source-tag { font-size: 0.8rem; font-weight: bold; color: #000; display: inline-block; margin-bottom: 0.5rem; border-bottom: 1px solid #000; padding-bottom: 2px;}
         
-        /* Texto de la tarjeta (Por defecto MÓVIL: 12 líneas) */
-        .card-text { 
-            font-size: 0.95rem; 
-            color: #000; 
-            margin-bottom: 1.25rem; 
-            display: -webkit-box; 
-            -webkit-line-clamp: 12; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-        }
+        .card-text { font-size: 0.95rem; color: #000; margin-bottom: 1.25rem; display: -webkit-box; -webkit-line-clamp: 12; -webkit-box-orient: vertical; overflow: hidden; }
         .card-text mark { background-color: var(--highlight); color: #000; font-weight: bold; }
         
         .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #000; padding-top: 1rem; flex-wrap: wrap; gap: 1rem; }
@@ -112,7 +126,7 @@
         .btn-open { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; font-weight: bold; color: var(--primary); text-decoration: underline; }
 
         .pagination { display: flex; justify-content: center; align-items: center; gap: 1.5rem; margin-top: 2.5rem; margin-bottom: 1rem; display: none; }
-        .btn-page { background-color: var(--surface); color: var(--primary); border: 2px solid var(--primary); padding: 0.6rem 1.2rem; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+        .btn-page { background-color: var(--surface); color: var(--primary); border: 2px solid var(--primary); padding: 0.6rem 1.2rem; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; text-align: center;}
         .btn-page:hover:not(:disabled) { background-color: var(--primary); color: white; }
         .btn-page:disabled { border-color: #ccc; color: #999; cursor: not-allowed; }
         .page-info { font-size: 1rem; font-weight: 700; color: var(--text-main); }
@@ -135,24 +149,13 @@
         .stat-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
         .stat-item strong { color: var(--primary); font-size: 1rem; }
 
-        @media (max-height: 500px) {
-            header { position: relative; } 
-            .header-content { flex-direction: row; justify-content: center; padding: 0.5rem 1rem; }
-            .logo-img { height: 40px; }
-            .logo-subtitle { display: none; }
-            .env-badge { display: none; } 
-        }
-
-        /* --- PANTALLAS GRANDES (PC / TABLET HORIZONTAL) --- */
         @media (min-width: 769px) {
-            .card-text {
-                -webkit-line-clamp: 25; 
-            }
+            .card-text { -webkit-line-clamp: 25; }
         }
 
         @media (max-width: 768px) {
             .header-content { flex-direction: column; text-align: center; gap: 1rem; }
-            .brand-group { flex-direction: column; gap: 0.5rem; }
+            .brand-group { flex-direction: column; gap: 0.5rem; justify-content: center; }
             .separator { display: none; }
             .logo-img { height: 100px; max-width: 90%; }
             .env-badge { white-space: normal; justify-content: center; width: 100%; max-width: 320px; }
@@ -175,9 +178,31 @@
 </head>
 <body>
 
+    <!-- MODAL DE ACTUALIZACIÓN -->
+    <div id="modal-update" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">🚀 Nueva versión detectada</h3>
+            <div class="modal-text">
+                Usted posee la versión <strong id="txt-local-ver"></strong>.<br>
+                La nueva versión es <strong id="txt-remote-ver"></strong>.<br><br>
+                ¿Desea descargar el archivo ZIP con las nuevas versiones de tesis del repositorio?
+            </div>
+            <div class="modal-buttons">
+                <a id="btn-download-zip" href="https://github.com/sosasoftcuba/base_consultora_uo/archive/refs/heads/main.zip" class="btn-search" target="_blank">Sí, descargar ZIP</a>
+                <button id="btn-skip-zip" class="btn-page">No, gracias</button>
+            </div>
+            <div id="msg-downloaded" class="msg-box">
+                <strong>Descarga iniciada.</strong> Una vez finalizada, elimine la carpeta vieja de su dispositivo y copie la nueva carpeta extraída en C: (o en su almacenamiento) para un mejor funcionamiento.
+            </div>
+            <div id="msg-skipped" class="msg-box">
+                Puede que lo que busque esté en las nuevas tesis, o algunas tesis pueden haber sido derogadas/eliminadas.
+            </div>
+        </div>
+    </div>
+
     <div id="loader-overlay">
         <div class="spinner"></div>
-        <div class="loader-title">Descargando datos de tesis</div>
+        <div class="loader-title">Cargando base de datos</div>
         <div class="loader-text" id="loader-status">Iniciando...</div>
         <div class="progress-container">
             <div id="progress-bar"></div>
@@ -193,6 +218,13 @@
                     <span class="logo-title">Consultora de Tesis Local</span>
                     <span class="logo-subtitle">Facultad Ciencias de la Educación</span>
                 </div>
+                <span class="separator">|</span>
+                <div class="logo-text">
+                    <a href="ayuda.html" class="btn-page" style="text-decoration: none;">Ayuda</a>
+                </div>
+                <div class="logo-text" id="btn-nueva-version-container" style="display: none;">
+                    <a href="#" class="btn-page blink" id="btn-nueva-version" style="text-decoration: none;">Nueva Versión</a>
+                </div>
             </div>
             <div class="env-badge" id="env-info">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
@@ -203,7 +235,7 @@
 
     <main>
         <div id="error-panel" class="panel">
-            <h3>🚨 Error Crítico: Faltan los datos o no hay conexión</h3>
+            <h3>🚨 Error Crítico: No se pudo iniciar</h3>
             <p>No se pudo cargar la base de datos. El buscador no funcionará.</p>
             <div id="error-instructions"></div>
         </div>
@@ -290,17 +322,23 @@
 
     <script>
         // --- LÓGICA DE CONTADORES (ABACUS) ---
-        fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/visitas_web')
-            .then(res => res.json())
-            .then(data => { document.getElementById('visit-count').innerText = data.value; })
-            .catch(e => { document.getElementById('visit-count').innerText = 'N/D'; });
+        if (navigator.onLine) {
+            fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/visitas_web')
+                .then(res => res.json())
+                .then(data => { document.getElementById('visit-count').innerText = data.value; })
+                .catch(e => { document.getElementById('visit-count').innerText = 'N/D'; });
 
-        fetch('https://abacus.jasoncameron.dev/get/sosasoftcuba_uo/tesis_abiertas')
-            .then(res => res.json())
-            .then(data => { document.getElementById('thesis-count').innerText = data.value || 0; })
-            .catch(e => { document.getElementById('thesis-count').innerText = 'N/D'; });
+            fetch('https://abacus.jasoncameron.dev/get/sosasoftcuba_uo/tesis_abiertas')
+                .then(res => res.json())
+                .then(data => { document.getElementById('thesis-count').innerText = data.value || 0; })
+                .catch(e => { document.getElementById('thesis-count').innerText = 'N/D'; });
+        } else {
+            document.getElementById('visit-count').innerText = 'Offline';
+            document.getElementById('thesis-count').innerText = 'Offline';
+        }
 
         function registrarConsulta() {
+            if (!navigator.onLine) return;
             fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/tesis_abiertas')
                 .then(res => res.json())
                 .then(data => { document.getElementById('thesis-count').innerText = data.value; })
@@ -312,7 +350,12 @@
         window.TESIS = [];
         const DB_NAME = 'ConsultoraDB';
         const STORE_NAME = 'chunks';
+        
         const isFileProtocol = window.location.protocol === 'file:';
+        const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
+        const isLocal = isFileProtocol || isLocalhost;
+
+        const GITHUB_META_URL = 'https://sosasoftcuba.github.io/base_consultora_uo/index/datos_meta.js';
 
         // --- FUNCIONES DE INDEXEDDB ---
         function openDB() {
@@ -367,7 +410,6 @@
             } catch (e) {}
         }
 
-        // --- FUNCIÓN PARA FORMATEAR LA FECHA ---
         function mostrarFechaActualizacion(versionStr) {
             if (!versionStr || versionStr.length !== 14) return;
             const year = versionStr.substring(0,4);
@@ -378,60 +420,137 @@
             document.getElementById('last-update').innerText = `Última actualización: ${day}/${month}/${year} a las ${hour}:${min}`;
         }
 
+        // --- CONTROL DEL MODAL DE ACTUALIZACIÓN ---
+        document.getElementById('btn-nueva-version').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('txt-local-ver').innerText = window.LOCAL_VERSION || 'Desconocida';
+            document.getElementById('txt-remote-ver').innerText = window.REMOTE_VERSION || 'Desconocida';
+            document.getElementById('modal-update').style.display = 'flex';
+            document.getElementById('msg-downloaded').style.display = 'none';
+            document.getElementById('msg-skipped').style.display = 'none';
+            document.getElementById('btn-download-zip').style.display = 'inline-block';
+            document.getElementById('btn-skip-zip').style.display = 'inline-block';
+        });
+
+        document.getElementById('btn-download-zip').addEventListener('click', () => {
+            document.getElementById('msg-downloaded').style.display = 'block';
+            document.getElementById('msg-skipped').style.display = 'none';
+            document.getElementById('btn-download-zip').style.display = 'none';
+            document.getElementById('btn-skip-zip').style.display = 'none';
+        });
+
+        document.getElementById('btn-skip-zip').addEventListener('click', () => {
+            document.getElementById('msg-skipped').style.display = 'block';
+            document.getElementById('msg-downloaded').style.display = 'none';
+            document.getElementById('btn-download-zip').style.display = 'none';
+            document.getElementById('btn-skip-zip').style.display = 'none';
+        });
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modal-update').addEventListener('click', (e) => {
+            if(e.target.id === 'modal-update') {
+                document.getElementById('modal-update').style.display = 'none';
+            }
+        });
+
+        // --- LÓGICA DE COMPROBACIÓN DE VERSIÓN ---
+        async function verificarActualizacion(localVersion) {
+            if (!navigator.onLine || !localVersion) return;
+            
+            try {
+                // Hacemos ping al meta de GitHub
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 4000);
+                const resRemote = await fetch(GITHUB_META_URL + '?t=' + Date.now(), { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                if (resRemote.ok) {
+                    const textRemote = await resRemote.text();
+                    const matchRemote = textRemote.match(/DATA_VERSION\s*=\s*["']([^"']+)["']/);
+                    
+                    if (matchRemote) {
+                        const remoteVersion = matchRemote[1];
+                        // Comparar strings tipo "20231025120000". Si remota es mayor (más nueva), alertar.
+                        if (remoteVersion.localeCompare(localVersion) > 0) {
+                            window.LOCAL_VERSION = localVersion;
+                            window.REMOTE_VERSION = remoteVersion;
+                            
+                            // Mostrar el botón parpadeante
+                            document.getElementById('btn-nueva-version-container').style.display = 'block';
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log("No se pudo verificar actualización (posible falta de internet o timeout).");
+            }
+        }
+
         // --- LÓGICA DE CARGA ---
         async function iniciarDescarga() {
-            if (!navigator.onLine) {
-                document.getElementById('loader-overlay').style.display = 'none';
-                const errorPanel = document.getElementById('error-panel');
-                errorPanel.style.display = 'block';
-                document.getElementById('search-section').style.display = 'none';
-                document.getElementById('hero-section').style.display = 'none';
-                document.getElementById('error-instructions').innerHTML = `
-                    <p><strong>No hay conexión a internet.</strong></p>
-                    <p>Si deseas buscar sin internet, por favor utiliza la <strong>versión portable (carpeta local)</strong> de este proyecto.</p>
-                `;
-                return;
-            }
-
-            const ua = navigator.userAgent;
-            const isAndroid = /Android/i.test(ua);
-            const browserName = /SamsungBrowser/i.test(ua) ? "Samsung Internet" :
-                                /Edg/i.test(ua) ? "Microsoft Edge" :
-                                /OPR|Opera/i.test(ua) ? "Opera" :
-                                /Firefox|FxiOS/i.test(ua) ? "Firefox" :
-                                /Chrome|CriOS/i.test(ua) ? "Chrome" : "Desconocido";
-
-            if (isFileProtocol) {
-                document.getElementById('loader-status').innerText = "Modo local: buscando datos en tu dispositivo...";
+            const loaderStatus = document.getElementById('loader-status');
+            
+            if (isLocal) {
+                loaderStatus.innerText = isLocalhost ? "Modo servidor local: buscando datos..." : "Modo archivo local: buscando datos...";
                 
-                if (isAndroid && browserName !== "Firefox") {
+                const ua = navigator.userAgent;
+                const isAndroid = /Android/i.test(ua);
+                const browserName = /SamsungBrowser/i.test(ua) ? "Samsung Internet" :
+                                    /Edg/i.test(ua) ? "Microsoft Edge" :
+                                    /OPR|Opera/i.test(ua) ? "Opera" :
+                                    /Firefox|FxiOS/i.test(ua) ? "Firefox" :
+                                    /Chrome|CriOS/i.test(ua) ? "Chrome" : "Desconocido";
+
+                if (isFileProtocol && isAndroid && browserName !== "Firefox") {
                     document.getElementById('warn-panel').style.display = 'block';
                     document.getElementById('warn-instructions').innerHTML = `
                         <p>Estás usando <strong>${browserName}</strong> en Android. Este navegador bloquea la lectura de archivos locales por seguridad.</p>
                         <p><strong>Para solucionarlo, tienes 2 opciones:</strong></p>
                         <ol>
                             <li>Abre esta carpeta usando <strong>Mozilla Firefox</strong>.</li>
-                            <li>Instala una app de Servidor HTTP como <a href="https://play.google.com/store/search?q=http%20server%20python&c=apps" target="_blank" style="color:var(--primary); text-decoration:underline;">Simple HTTP Server</a> o <a href="https://play.google.com/store/apps/details?id=com.termux" target="_blank" style="color:var(--primary); text-decoration:underline;">Termux</a> desde Play Store para servir la carpeta.</li>
+                            <li>Instala una app de Servidor HTTP como <strong>Simple HTTP Server</strong> desde Play Store para servir la carpeta.</li>
                         </ol>
                     `;
                 }
 
-                const script = document.createElement('script');
-                script.src = 'index/datos_meta.js';
-                script.onload = () => {
+                // SOLUCIÓN AL BLOQUEO DE FETCH EN FILE://
+                // Usar inyección de script en lugar de fetch para leer datos_meta.js local
+                const scriptMeta = document.createElement('script');
+                scriptMeta.src = 'index/datos_meta.js?t=' + Date.now();
+                scriptMeta.onload = () => {
                     if (window.TOTAL_CHUNKS) {
-                        if (window.DATA_VERSION) mostrarFechaActualizacion(window.DATA_VERSION);
+                        if (window.DATA_VERSION) {
+                            mostrarFechaActualizacion(window.DATA_VERSION);
+                            // Llamar a la verificación de actualización en segundo plano
+                            verificarActualizacion(window.DATA_VERSION);
+                        }
+                        
+                        // Cargar los datos locales
                         cargarChunksLocal();
                     } else {
-                        mostrarErrorLocal();
+                        mostrarError("El archivo 'datos_meta.js' está vacío o corrupto. Revisa que la carpeta 'index' esté completa.");
                     }
                 };
-                script.onerror = () => { mostrarErrorLocal(); };
-                document.body.appendChild(script);
+                scriptMeta.onerror = () => {
+                    mostrarError("No se encontró la carpeta 'index' con los datos (index/datos_meta.js) junto al index.html. Asegúrate de haber copiado la carpeta completa.");
+                };
+                document.body.appendChild(scriptMeta);
                 return;
             }
 
-            document.getElementById('loader-status').innerText = "Verificando actualizaciones en el servidor...";
+            // --- MODO INTERNET (GitHub) ---
+            if (!navigator.onLine) {
+                document.getElementById('loader-overlay').style.display = 'none';
+                document.getElementById('error-panel').style.display = 'block';
+                document.getElementById('search-section').style.display = 'none';
+                document.getElementById('hero-section').style.display = 'none';
+                document.getElementById('error-instructions').innerHTML = `
+                    <p><strong>No hay conexión a internet.</strong></p>
+                    <p>Para buscar sin internet, por favor utiliza la <strong>versión portable (carpeta local)</strong> de este proyecto.</p>
+                `;
+                return;
+            }
+
+            loaderStatus.innerText = "Verificando actualizaciones en el servidor...";
             try {
                 const res = await fetch('index/datos_meta.js?t=' + Date.now());
                 if (!res.ok) throw new Error("No meta");
@@ -469,13 +588,12 @@
             if (chunkIndex > window.TOTAL_CHUNKS) { finalizarCarga(); return; }
 
             const script = document.createElement('script');
-            script.src = `index/datos_${chunkIndex}.js`;
+            script.src = `index/datos_${chunkIndex}.js?t=${Date.now()}`;
             script.onload = () => { chunkIndex++; cargarChunksLocal(); };
-            script.onerror = () => { mostrarErrorLocal(); };
+            script.onerror = () => { mostrarError("Faltan archivos de datos locales. Revisa que la carpeta 'index' esté completa."); };
             document.body.appendChild(script);
         }
 
-        // --- CARGA INTERNET OPTIMIZADA EN PARALELO ---
         async function cargarChunksInternet() {
             const total = window.TOTAL_CHUNKS || 55;
             const BATCH_SIZE = 5;
@@ -546,18 +664,16 @@
             }, 500);
         }
 
-        function mostrarErrorLocal() {
+        function mostrarError(mensaje) {
             document.getElementById('loader-overlay').style.display = 'none';
             const errorPanel = document.getElementById('error-panel');
             errorPanel.style.display = 'block';
             document.getElementById('search-section').style.display = 'none';
             document.getElementById('hero-section').style.display = 'none';
-            document.getElementById('error-instructions').innerHTML = `
-                <p>No se pudieron cargar los datos desde el almacenamiento local.</p>
-            `;
+            document.getElementById('error-instructions').innerHTML = `<p>${mensaje}</p>`;
         }
 
-        // --- LÓGICA DEL BUSCADOR (ALGORITMO DE RAREZA Y JERARQUÍA) ---
+        // --- LÓGICA DEL BUSCADOR ---
         function initApp() {
             if (typeof window.TESIS === 'undefined' || window.TESIS.length === 0) {
                 document.getElementById('error-panel').style.display = 'block';
@@ -582,7 +698,7 @@
             let paginaActual = 1;
             let totalPaginas = 1;
             let resultadosFiltrados = [];
-            let globalModifier = null; // Guardamos el modificador global para el snippet
+            let globalModifier = null; 
 
             document.querySelectorAll('.current-year').forEach(el => el.textContent = new Date().getFullYear());
 
@@ -636,18 +752,15 @@
                 return regex ? highlighted.replace(regex, '<mark>$1</mark>') : highlighted;
             };
 
-            // --- SNIPPET QUE PRIORIZA EL MODIFICADOR GLOBAL ---
             const createSnippet = (text, searchTerms, exactPhrase) => {
                 const normalizedText = normalizeText(text);
                 let firstMatchIndex = -1;
 
-                // 1. Intentar buscar la frase exacta
                 if (exactPhrase && exactPhrase.length > 2) {
                     const idx = normalizedText.indexOf(exactPhrase);
                     if (idx !== -1) firstMatchIndex = idx;
                 }
 
-                // 2. Si no hay frase exacta, buscar obligatoriamente el MODIFICADOR (la palabra más rara)
                 if (firstMatchIndex === -1 && globalModifier) {
                     const modVariations = getStemVariations(globalModifier);
                     for (const m of modVariations) {
@@ -656,7 +769,6 @@
                     }
                 }
 
-                // 3. Si no hay modificador, buscar cualquier término
                 if (firstMatchIndex === -1) {
                     for (const term of searchTerms) {
                         const index = normalizedText.indexOf(term);
@@ -692,7 +804,7 @@
                 itemsPagina.forEach(({ item }) => {
                     const rawSnippet = createSnippet(item.texto, searchTerms, normalizedQuery); 
                     let fuenteStr = item.fuente || 'Local';
-                    if (!isFileProtocol) { fuenteStr = "Internet"; }
+                    if (!isLocal) { fuenteStr = "Internet"; }
 
                     const card = document.createElement('article');
                     card.className = 'card';
@@ -735,7 +847,6 @@
                 let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
                 if (searchTerms.length === 0) searchTerms = rawWords;
 
-                // --- 1. CALCULAR LA RAREZA DE CADA PALABRA (Frecuencia Global) ---
                 let docFreq = {};
                 searchTerms.forEach(t => docFreq[t] = 0);
                 
@@ -749,13 +860,11 @@
                     });
                 });
 
-                // Ordenar términos por rareza (el menor docFreq va primero)
                 const sortedTerms = [...searchTerms].sort((a, b) => docFreq[a] - docFreq[b]);
                 
-                globalModifier = sortedTerms[0]; // La palabra más rara es el modificador
-                let baseNoun = sortedTerms[sortedTerms.length - 1]; // La más común es el sustantivo
+                globalModifier = sortedTerms[0]; 
+                let baseNoun = sortedTerms[sortedTerms.length - 1]; 
 
-                // --- 2. GENERAR FRASES EXACTAS (En cualquier orden) ---
                 let exactPhrases = [normalizedQuery];
                 if (searchTerms.length > 1) {
                     exactPhrases.push(searchTerms.join(' '));
@@ -775,9 +884,6 @@
                     let hasModifier = false;
                     let hasBase = false;
 
-                    // 3. PUNTUACIÓN JERÁRQUICA
-                    
-                    // Nivel 1: Frase Exacta (máxima prioridad)
                     exactPhrases.forEach(phrase => {
                         const regexPhrase = new RegExp(escapeRegExp(phrase), 'g');
                         const occTitle = (titleNorm.match(regexPhrase) || []).length;
@@ -786,7 +892,6 @@
                         if (occText > 0) { score += 5000000 + (occText * 1000); hasExact = true; }
                     });
 
-                    // Nivel 2: Modificador (La palabra más rara)
                     if (globalModifier) {
                         const modVariations = getStemVariations(globalModifier);
                         modVariations.forEach(v => {
@@ -798,7 +903,6 @@
                         });
                     }
 
-                    // Nivel 3: Sustantivo Base (La palabra más común)
                     if (baseNoun) {
                         const baseVariations = getStemVariations(baseNoun);
                         baseVariations.forEach(v => {

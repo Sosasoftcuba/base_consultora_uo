@@ -12,7 +12,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://sosasoftcuba.github.io/base_consultora_uo/">
     <meta property="og:title" content="Consultora de Tesis | Universidad de Oriente">
-    <meta property="og:description" content="Repositorio de Tesis de la Universidad de Oriente,Cuba. tenga en cuentaque estos materiales pueden ser consultados libremente, siempre y cuando se referencien a sus autores originales, los autores y la Universidad de Oriente se reservan los derechos de estos documentos u otros de su pertenencia.">
+    <meta property="og:description" content="Explora el repositorio académico. Busca por título, autor, año o contenido dentro de las tesis.">
     <meta property="og:image" content="https://sosasoftcuba.github.io/base_consultora_uo/imagen/logo.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,41 +31,21 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
 
-        /* --- ANIMACIÓN BOTÓN PARPADEANTE (Alerta de actualización) --- */
-        @keyframes blinker {
-            50% { opacity: 0.3; }
-        }
-        .blink {
-            animation: blinker 1s linear infinite;
-            background-color: #f59e0b !important;
-            color: white !important;
-            border-color: #f59e0b !important;
-        }
+        /* --- ANIMACIÓN BOTÓN PARPADEANTE --- */
+        @keyframes blinker { 50% { opacity: 0.3; } }
+        .blink { animation: blinker 1s linear infinite; background-color: #f59e0b !important; color: white !important; border-color: #f59e0b !important; }
 
-        /* --- TOAST NOTIFICATION (Centrado en pantalla) --- */
+        /* --- TOAST NOTIFICATION --- */
         .toast-container {
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10005;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            pointer-events: none; 
-            gap: 10px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10005; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            pointer-events: none; gap: 10px;
         }
         .toast {
-            pointer-events: auto; 
-            background: var(--surface);
-            border-left: 5px solid var(--ok-border);
-            border-radius: 8px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            padding: 20px 25px;
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-            min-width: 320px;
-            max-width: 450px;
-            transform: scale(0.8) translateY(20px);
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: auto; background: var(--surface); border-left: 5px solid var(--ok-border);
+            border-radius: 8px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); padding: 20px 25px;
+            display: flex; align-items: flex-start; gap: 15px; min-width: 320px; max-width: 450px;
+            transform: scale(0.8) translateY(20px); opacity: 0; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .toast.show { transform: scale(1) translateY(0); opacity: 1; }
         .toast.error { border-left-color: var(--alert-border); }
@@ -106,9 +86,20 @@
         .modal-text { margin-bottom: 20px; text-align: left; line-height: 1.5; color: var(--text-main); font-size: 1rem; }
         .modal-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         .modal-buttons .btn-search, .modal-buttons .btn-page { width: 100%; margin-bottom: 10px; }
-        .msg-box { display: none; margin-top: 15px; padding: 10px; text-align: left; font-size: 0.9em; border-radius: 4px; }
-        #msg-downloaded { background: var(--ok-bg); border-left: 4px solid var(--ok-border); color: var(--ok-text); }
-        #msg-skipped { background: var(--warn-bg); border-left: 4px solid var(--warn-border); color: var(--warn-text); }
+        
+        /* Vistas de resultado */
+        .msg-box { display: none; text-align: center; }
+        .msg-icon { font-size: 3rem; margin-bottom: 10px; line-height: 1; }
+        .msg-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+        .msg-text { font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5; }
+        
+        #msg-downloaded { color: var(--ok-text); }
+        #msg-downloaded .msg-title { color: var(--ok-text); }
+        #msg-downloaded .msg-text { color: #065f46; }
+
+        #msg-skipped { color: var(--warn-text); }
+        #msg-skipped .msg-title { color: var(--warn-text); }
+        #msg-skipped .msg-text { color: #92400e; }
 
         /* --- HEADER --- */
         header { background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 0; position: sticky; top: 0; z-index: 10; box-shadow: var(--shadow-sm); }
@@ -216,28 +207,48 @@
 </head>
 <body>
 
-    <!-- CONTENEDOR DE NOTIFICACIONES TOAST (Centrado) -->
     <div id="toast-container" class="toast-container"></div>
 
-    <!-- MODAL DE ACTUALIZACIÓN -->
+    <!-- MODAL DE ACTUALIZACIÓN CON VISTAS SEPARADAS -->
     <div id="modal-update" class="modal-overlay">
         <div class="modal-content">
-            <h3 class="modal-title">🚀 Nueva versión detectada</h3>
-            <div class="modal-text">
-                Usted posee la versión <strong id="txt-local-ver"></strong>.<br>
-                La nueva versión es <strong id="txt-remote-ver"></strong>.<br><br>
-                ¿Desea descargar el archivo ZIP con las nuevas versiones de tesis del repositorio?
+            
+            <!-- VISTA INICIAL -->
+            <div id="modal-initial-view">
+                <h3 class="modal-title">🚀 Nueva versión detectada</h3>
+                <div class="modal-text">
+                    Usted posee la versión <strong id="txt-local-ver"></strong>.<br>
+                    La nueva versión es <strong id="txt-remote-ver"></strong>.<br><br>
+                    ¿Desea descargar el archivo ZIP con las nuevas versiones de tesis del repositorio?
+                </div>
+                <div class="modal-buttons">
+                    <a id="btn-download-zip" href="https://github.com/sosasoftcuba/base_consultora_uo/archive/refs/heads/main.zip" class="btn-search" target="_blank">Sí, descargar ZIP</a>
+                    <button id="btn-skip-zip" class="btn-page">No, gracias</button>
+                </div>
             </div>
-            <div class="modal-buttons">
-                <a id="btn-download-zip" href="https://github.com/sosasoftcuba/base_consultora_uo/archive/refs/heads/main.zip" class="btn-search" target="_blank">Sí, descargar ZIP</a>
-                <button id="btn-skip-zip" class="btn-page">No, gracias</button>
-            </div>
+
+            <!-- VISTA RESULTADO: DESCARGA INICIADA -->
             <div id="msg-downloaded" class="msg-box">
-                <strong>Descarga iniciada.</strong> Una vez finalizada, elimine la carpeta vieja de su dispositivo y copie la nueva carpeta extraída en C: (o en su almacenamiento) para un mejor funcionamiento.
+                <div class="msg-icon">📥</div>
+                <div class="msg-title">Descargando actualización...</div>
+                <div class="msg-text">
+                    Se está descargando la nueva versión <strong id="txt-download-ver"></strong>, espere por favor...
+                    <br><br>
+                    Al terminar la descarga, le recomendamos <strong>eliminar la vieja carpeta</strong> y <strong>extraer esta nueva en C:</strong> para un mejor alcance.
+                </div>
+                <button class="btn-page" onclick="document.getElementById('modal-update').style.display='none'">Entendido</button>
             </div>
+
+            <!-- VISTA RESULTADO: OMITIDA -->
             <div id="msg-skipped" class="msg-box">
-                Puede que lo que busque esté en las nuevas tesis, o algunas tesis pueden haber sido derogadas/eliminadas.
+                <div class="msg-icon">ℹ️</div>
+                <div class="msg-title">Actualización omitida</div>
+                <div class="msg-text">
+                    Puede que lo que busque esté en las nuevas tesis, o algunas tesis pueden haber sido derogadas/eliminadas.
+                </div>
+                <button class="btn-page" onclick="document.getElementById('modal-update').style.display='none'">Cerrar</button>
             </div>
+
         </div>
     </div>
 
@@ -387,7 +398,7 @@
                 .catch(e => {});
         }
 
-        // --- SISTEMA DE NOTIFICACIONES TOAST (PROFESIONAL - CENTRADO) ---
+        // --- SISTEMA DE NOTIFICACIONES TOAST ---
         function mostrarToast(titulo, mensaje, tipo = 'success', version = null) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -408,9 +419,7 @@
             `;
             
             container.appendChild(toast);
-            
             setTimeout(() => { toast.classList.add('show'); }, 10);
-
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.classList.remove('show');
@@ -494,29 +503,30 @@
             document.getElementById('last-update').innerText = `Última actualización: ${day}/${month}/${year} a las ${hour}:${min}`;
         }
 
-        // --- LÓGICA DEL MODAL ---
+        // --- LÓGICA DEL MODAL (VISTAS SEPARADAS) ---
         function abrirModalActualizacion() {
             document.getElementById('txt-local-ver').innerText = window.LOCAL_VERSION || 'Desconocida';
             document.getElementById('txt-remote-ver').innerText = window.REMOTE_VERSION || 'Desconocida';
             document.getElementById('modal-update').style.display = 'flex';
+            
+            // Mostrar vista inicial
+            document.getElementById('modal-initial-view').style.display = 'block';
+            
+            // Ocultar vistas de resultado
             document.getElementById('msg-downloaded').style.display = 'none';
             document.getElementById('msg-skipped').style.display = 'none';
-            document.getElementById('btn-download-zip').style.display = 'inline-block';
-            document.getElementById('btn-skip-zip').style.display = 'inline-block';
         }
 
         document.getElementById('btn-download-zip').addEventListener('click', () => {
+            // Ocultar texto de pregunta e inyectar la versión en el mensaje de descarga
+            document.getElementById('modal-initial-view').style.display = 'none';
+            document.getElementById('txt-download-ver').innerText = window.REMOTE_VERSION || 'nueva';
             document.getElementById('msg-downloaded').style.display = 'block';
-            document.getElementById('msg-skipped').style.display = 'none';
-            document.getElementById('btn-download-zip').style.display = 'none';
-            document.getElementById('btn-skip-zip').style.display = 'none';
         });
 
         document.getElementById('btn-skip-zip').addEventListener('click', () => {
+            document.getElementById('modal-initial-view').style.display = 'none';
             document.getElementById('msg-skipped').style.display = 'block';
-            document.getElementById('msg-downloaded').style.display = 'none';
-            document.getElementById('btn-download-zip').style.display = 'none';
-            document.getElementById('btn-skip-zip').style.display = 'none';
         });
 
         document.getElementById('modal-update').addEventListener('click', (e) => {
@@ -528,7 +538,7 @@
         // --- LÓGICA DE COMPROBACIÓN DE VERSIÓN ---
         async function verificarActualizacion(localVersion) {
             const btn = document.getElementById('btn-estado-version');
-            btn.style.display = 'inline-block';
+            btn.style.display = 'inline-block'; 
             
             if (!navigator.onLine) {
                 btn.innerText = 'Modo Offline';
@@ -952,8 +962,7 @@
                 const normalizedQuery = normalizeText(query);
                 const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
 
-                // --- NUEVA LÓGICA DE AGRUPACIÓN DE MODIFICADORES ---
-                // Agrupa palabras cortas (como "no", "sin", "con") con la siguiente palabra
+                // Agrupación de modificadores (ej. "no verbales")
                 let groupedTerms = [];
                 const connectors = ['no', 'sin', 'con', 'para', 'por', 'en', 'de', 'del']; 
 
@@ -961,7 +970,7 @@
                     const word = rawWords[i];
                     if (connectors.includes(word) && i + 1 < rawWords.length) {
                         groupedTerms.push(word + ' ' + rawWords[i + 1]);
-                        i++; // Saltar la siguiente palabra porque ya se agrupó
+                        i++; 
                     } else {
                         groupedTerms.push(word);
                     }

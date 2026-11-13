@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda · Cómo abrir el repositorio | Consultora de Tesis</title>
+    <link rel="icon" type="image/png" href="imagen/favicon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #f8fafc; --surface: #ffffff; --primary: #1d4ed8; --primary-light: #eff6ff;
+            --primary-hover: #1e40af; --text-main: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
+            --alert-bg: #fef2f2; --alert-border: #f87171; --alert-text: #991b1b;
+            --warn-bg: #fffbeb; --warn-border: #fcd34d; --warn-text: #92400e;
+            --ok-bg: #ecfdf5; --ok-border: #10b981; --ok-text: #065f46;
+            --highlight: #fef08a; --radius: 12px; --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+        /* --- HEADER (idéntico a index.html) --- */
+        header { background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 0; position: sticky; top: 0; z-index: 10; box-shadow: var(--shadow-sm); }
+        .header-content { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+        .brand-group { display: flex; align-items: center; gap: 1rem; }
+        .logo-img { height: 55px; width: auto; object-fit: contain; color: transparent; }
+        .separator { font-size: 2rem; font-weight: 300; color: var(--border); line-height: 1; }
+        .logo-text { display: flex; flex-direction: column; line-height: 1.3; }
+        .logo-title { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+        .logo-subtitle { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); }
+        .env-badge { background-color: var(--primary-light); color: var(--primary); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; border: 1px solid #bfdbfe; display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; }
+
+        /* --- MAIN --- */
+        main { flex: 1; max-width: 1100px; margin: 0 auto; width: 100%; padding: 3rem 1.5rem; }
+
+        .hero { text-align: center; margin-bottom: 2rem; }
+        .hero h3 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; }
+        .hero p { font-size: clamp(1rem, 2vw, 1.1rem); color: var(--text-muted); max-width: 800px; margin: 0 auto 0.5rem auto; }
+
+        /* --- NAV RÁPIDA (botones cuadrados, mismo tamaño) --- */
+        .quick-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: stretch;
+            gap: 0.75rem;
+            margin: 1.5rem 0 2rem;
+        }
+        .quick-nav a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--surface);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            font-size: 0.92rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            flex: 1 1 0;
+            min-width: 180px;
+            max-width: 320px;
+            min-height: 48px;
+            text-align: center;
+        }
+        .quick-nav a:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        @media (max-width: 600px) {
+            .quick-nav a {
+                flex: 1 1 100%;
+                max-width: none;
+            }
+        }
+
+        /* --- PANELES (mismo estilo que index) --- */
+        .panel { border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; font-size: 1rem; box-shadow: var(--shadow-sm); }
+        .panel h3 { margin-bottom: 0.75rem; font-size: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+        .panel p { margin-bottom: 0.75rem; }
+        .panel p:last-child { margin-bottom: 0; }
+        .panel ul, .panel ol { margin-left: 1.5rem; margin-bottom: 0.75rem; }
+        .panel li { margin-bottom: 0.5rem; }
+        .panel code { background-color: rgba(0,0,0,0.06); padding: 0.2rem 0.5rem; border-radius: 6px; font-family: monospace; font-weight: 600; }
+        .panel-error { background-color: var(--alert-bg); border: 1px solid var(--alert-border); border-left: 5px solid var(--alert-border); color: var(--alert-text); }
+        .panel-warn { background-color: var(--warn-bg); border: 1px solid var(--warn-border); border-left: 5px solid #f59e0b; color: var(--warn-text); }
+        .panel-ok { background-color: var(--ok-bg); border: 1px solid var(--ok-border); border-left: 5px solid var(--ok-border); color: var(--ok-text); }
+
+        /* --- TÍTULOS DE SECCIÓN (idéntico a index) --- */
+        .section-title { margin: 2.5rem 0 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--border); scroll-margin-top: 100px; }
+        .section-title h2 { font-size: clamp(1.4rem, 3vw, 1.8rem); font-weight: 700; color: var(--text-main); }
+        .section-title p { color: var(--text-muted); font-size: 0.95rem; margin-top: 0.3rem; }
+
+        /* --- FICHAS (bordes negros fuertes, idénticas a index) --- */
+        .card { background-color: var(--surface); border: 2px solid #000; border-radius: 4px; padding: 1.5rem; }
+        .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; line-height: 1.3; }
+        .card-title a { color: var(--primary); text-decoration: underline; }
+        .card-text { font-size: 0.95rem; color: #000; margin-bottom: 1rem; }
+        .source-tag { font-size: 0.8rem; font-weight: bold; color: #000; display: inline-block; margin-bottom: 0.5rem; border-bottom: 1px solid #000; padding-bottom: 2px; }
+        .card-footer { display: flex; align-items: center; justify-content: space-between; border-top: 1px dashed #000; padding-top: 1rem; flex-wrap: wrap; gap: 1rem; }
+
+        /* --- BOTONES (idénticos a index) --- */
+        .btn-search { background-color: var(--primary); color: white; border: none; border-radius: 40px; padding: 0.8rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; text-align: center; }
+        .btn-search:hover { background-color: var(--primary-hover); }
+        .btn-page { background-color: var(--surface); color: var(--primary); border: 2px solid var(--primary); padding: 0.7rem 1.2rem; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; text-align: center; transition: all 0.2s; }
+        .btn-page:hover { background-color: var(--primary); color: white; }
+
+        /* --- GRIDS --- */
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+
+        /* --- DESCARGAS --- */
+        .downloads-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+        .download-card { text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .download-card .store-badge { display: block; height: 55px; width: auto; max-width: 100%; margin: 0 auto 0.75rem; object-fit: contain; }
+        .download-card .source-tag { align-self: center; }
+        .download-card .card-title { margin-bottom: 0.4rem; }
+        .download-card .card-text { flex: 1; text-align: center; margin-bottom: 1rem; }
+        .download-card .btn-search, .download-card .btn-page { width: 100%; }
+
+        /* --- PASOS --- */
+        .step-card { position: relative; padding-left: 3.75rem; }
+        .step-num { position: absolute; left: 1rem; top: 1.35rem; width: 2rem; height: 2rem; border-radius: 50%; background-color: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; flex-shrink: 0; }
+        .step-card .card-title { margin-bottom: 0.4rem; }
+        .step-card .card-text { margin-bottom: 0; }
+
+        /* --- IMÁGENES DE PASOS (con fallback descriptivo) --- */
+        .step-img { margin: 0.85rem 0 0; }
+        .step-img img { display: block; width: 100%; max-width: 240px; border: 2px solid #000; border-radius: 8px; background: #f8fafc; }
+        .step-img .img-fallback { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 0.4rem; padding: 1rem; background: #f1f5f9; border: 2px dashed #94a3b8; border-radius: 8px; text-align: center; min-height: 130px; max-width: 240px; }
+        .step-img.img-fail .img-fallback { display: flex; }
+        .step-img .img-emoji { font-size: 1.8rem; line-height: 1; }
+        .step-img .img-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; }
+
+        /* --- DIVISOR --- */
+        .divider { display: flex; align-items: center; gap: 1rem; margin: 2rem 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background-color: var(--border); }
+
+        /* --- FOOTER (idéntico a index.html) --- */
+        footer { background-color: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; margin-top: auto; }
+        .footer-content { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+        .footer-left { display: flex; align-items: center; gap: 1rem; }
+        .footer-left img { height: 35px; width: auto; }
+        .footer-brand { display: flex; flex-direction: column; line-height: 1.2; }
+        .footer-brand-title { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+        .footer-brand-sub { font-size: 0.8rem; color: var(--text-muted); }
+        .footer-right { display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem; text-align: right; }
+        .footer-email { color: var(--primary); text-decoration: none; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
+        .footer-copy { font-size: 0.8rem; color: var(--text-muted); }
+
+        .footer-legal { width: 100%; text-align: justify; font-size: 0.85rem; color: var(--text-main); background-color: #fafafa; margin-top: 1rem; padding: 1rem; border-radius: 8px; border: 1px solid var(--border); line-height: 1.5; }
+        .footer-legal strong { color: #dc2626; display: block; margin-bottom: 4px; font-size: 0.95rem; }
+
+        .stats-container { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); width: 100%; }
+        .stat-item { display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+        .stat-item strong { color: var(--primary); font-size: 1rem; }
+
+        @media (max-height: 500px) {
+            header { position: relative; }
+            .header-content { flex-direction: row; justify-content: center; padding: 0.5rem 1rem; }
+            .logo-img { height: 40px; }
+            .logo-subtitle { display: none; }
+            .env-badge { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; text-align: center; gap: 1rem; }
+            .brand-group { flex-direction: column; gap: 0.5rem; }
+            .separator { display: none; }
+            .logo-img { height: 100px; max-width: 90%; }
+            .env-badge { white-space: normal; justify-content: center; width: 100%; max-width: 320px; }
+            main { padding: 2rem 1rem; }
+            .grid-2, .downloads-grid { grid-template-columns: 1fr; }
+            .card { padding: 1.25rem; }
+            .card-footer { flex-direction: column; align-items: stretch; }
+            .footer-content { flex-direction: column; justify-content: center; gap: 1.5rem; }
+            .footer-left { flex-direction: column; text-align: center; gap: 0.5rem; }
+            .footer-right { align-items: center; text-align: center; }
+            .footer-legal { text-align: center; }
+            .step-card { padding-left: 1rem; padding-top: 3.5rem; }
+            .step-num { top: 1rem; left: 1rem; }
+            .btn-search { width: 100%; }
+            .step-img img, .step-img .img-fallback { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="brand-group">
+                <img src="imagen/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+                <span class="separator">|</span>
+                <div class="logo-text">
+                    <span class="logo-title">Ayuda · Cómo abrir el repositorio</span>
+                    <span class="logo-subtitle">Facultad Ciencias de la Educación</span>
+                </div>
+            </div>
+            <div class="env-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                 <button  class="btn-page"><a href="./index.html" >Volver al Repositorio</a></button><button  class="btn-page"><a href="#" >Nueva Version Detectada</a></button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- HERO -->
+        <section class="hero">
+            <h3>¿Cómo abrir y buscar en el repositorio?</h3>
+            <p>En la mayoría de los sistemas basta con <strong>abrir el archivo con doble clic</strong>. Solo <strong>Android</strong> necesita un paso extra por seguridad. Elige tu caso:</p>
+        </section>
+
+        <!-- NAV RÁPIDA -->
+        <nav class="quick-nav" aria-label="Ir a tu caso">
+            <a href="#android">📱 Estoy en Android</a>
+            <a href="#otras">🖥️ Estoy en otra plataforma</a>
+            <a href="#buscar">🔍 Cómo buscar</a>
+        </nav>
+
+        <!-- ==================== ANDROID ==================== -->
+        <section id="android">
+            <div class="section-title">
+                <h2>📱 Estás en Android</h2>
+                <p>Android requiere un paso extra. Aquí está la explicación y el tutorial completo con la app.</p>
+            </div>
+
+            <div class="panel panel-error">
+                <h3>⚠️ Android bloquea la apertura directa del archivo local</h3>
+                <p>Los navegadores de Android (<em>Chrome, Firefox, Edge, Brave, Samsung Internet, Opera…</em>) <strong>bloquean por seguridad el acceso a archivos locales</strong> mediante <code>file://</code>. Lo probamos de todas las formas posibles y <strong>no es posible</strong> abrir el <code>index.Html</code> con doble toque como en una PC. No es un fallo tuyo ni del repositorio: es una restricción del sistema operativo.</p>
+                <p>Por eso tienes <strong>dos caminos</strong> en Android:</p>
+            </div>
+
+            <!-- Opción A -->
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="source-tag">Opción A · La más fácil</div>
+                <div class="card-title">Si tienes internet, úsalo en línea</div>
+                <div class="card-text">Si tu teléfono tiene conexión, <strong>no necesitas instalar nada</strong>. Abre directamente la versión publicada en GitHub Pages. Tendrás las mismas búsquedas y el mismo contenido.</div>
+                <a href="https://sosasoftcuba.github.io/base_consultora_uo/index.Html" target="_blank" rel="noopener" class="btn-search">Abrir repositorio en línea</a>
+            </div>
+
+            <!-- Opción B -->
+            <div class="card" style="margin-bottom: 1.5rem;">
+                <div class="source-tag">Opción B · Sin internet</div>
+                <div class="card-title">Para usarlo local necesitas una app que haga de servidor</div>
+                <div class="card-text">Si prefieres trabajar sin conexión o guardar el repositorio en tu teléfono, instala <strong>Simple HTTP Server / SHTTPS</strong>. Esta app convierte una carpeta de tu teléfono en una pequeña web que sí puedes abrir en el navegador con <code>http://127.0.0.1:8080</code>. Es la solución oficial a la restricción de Android.</div>
+            </div>
+
+            <!-- DESCARGAS -->
+            <div class="section-title">
+                <h2>📥 Descarga la app para Android</h2>
+                <p>Tres vías para descargar Simple HTTP Server / SHTTPS. Google Play es la más cómoda.</p>
+            </div>
+
+            <div class="downloads-grid">
+                <div class="card download-card">
+                    <img src="imagen/google_play.png" alt="Disponible en Google Play" class="store-badge">
+                    <div class="source-tag">Recomendado</div>
+                    <div class="card-title">Google Play</div>
+                    <div class="card-text">Instalación automática y actualizaciones. La opción más sencilla para la mayoría.</div>
+                    <a href="https://play.google.com/store/apps/details?id=com.phlox.simpleserver" target="_blank" rel="noopener" class="btn-search">Abrir en Google Play</a>
+                </div>
+
+                <div class="card download-card">
+                    <img src="imagen/google_drive.png" alt="Google Drive" class="store-badge">
+                    <div class="source-tag">APK directo</div>
+                    <div class="card-title">Google Drive</div>
+                    <div class="card-text">Descarga directa del APK alojado en Drive. Ideal si prefieres un archivo instalable sin pasar por la tienda.</div>
+                    <a href="#" class="btn-page">Descargar APK (Drive)</a>
+                </div>
+
+                <div class="card download-card">
+                    <img src="imagen/logo.png"  alt="Repositorio" class="store-badge">
+                    <div class="source-tag">APK directo</div>
+                    <div class="card-title">Repositorio</div>
+                    <div class="card-text">Descarga del APK desde el repositorio del proyecto en GitHub. Fuente abierta y verificable.</div>
+                    <a href="./download/apks/Sosa-Tools_v3.0.64.apk" class="btn-page">Descargar APK (Repo)</a>
+                </div>
+				
+				<div class="card download-card">
+                    <img src="imagen/youtube.png"  alt="Repositorio" class="store-badge">
+                    <div class="source-tag">Tutorial del SHTTPS.apk</div>
+                    <div class="card-title">Canal en YouTube</div>
+                    <div class="card-text">Visita nuestro canal en Youtube para que sigas las instrucciones.</div>
+                    <a href="https://www.youtube.com/@sosasoftcuba" class="btn-page">Ver Tutorial en youtube (Repo)</a>
+                </div>
+				<div class="card download-card">
+                    <img src="imagen/logo.png"  alt="Repositorio" class="store-badge">
+                    <div class="source-tag">APK directo</div>
+                    <div class="card-title">Otros Proyectos</div>
+                    <div class="card-text">Descarga del APK desde el repositorio del proyecto en GitHub. Fuente abierta y verificable.</div>
+                    <a href="./404.html" class="btn-page">Descargar APK (Repo)</a>
+                </div>
+				<div class="card download-card">
+                    <img src="imagen/logo.png"  alt="Repositorio" class="store-badge">
+                    <div class="source-tag">APK directo</div>
+                    <div class="card-title">Acerca de...</div>
+                    <div class="card-text">Descarga del APK desde el repositorio del proyecto en GitHub. Fuente abierta y verificable.</div>
+                    <a href="./404.html" class="btn-page">Descargar APK (Repo)</a>
+                </div>
+            </div>
+
+            <div class="panel panel-warn">
+                <h3>ℹ️ Sobre Uptodown y los XAPK</h3>
+                <p>No encontramos una ficha oficial de esta aplicación en Uptodown. Además, algunos espejos ofrecen el formato <strong>XAPK</strong>, que puede requerir un instalador extra. Por eso priorizamos aquí los enlaces que entregan el <strong>APK directo</strong>: se instala con doble toque, activando antes “Instalar apps de origen desconocido” para tu navegador o gestor de archivos.</p>
+            </div>
+
+            <!-- PASOS -->
+            <div class="section-title">
+                <h2>🪜 Configura la app paso a paso</h2>
+                <p>Sigue este orden y en pocos minutos tendrás tu repositorio funcionando sin internet.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card step-card">
+                    <div class="step-num">1</div>
+                    <div class="card-title">Descarga e instala la app</div>
+                    <div class="card-text">Usa cualquiera de las tres opciones de arriba. Si instalas el APK desde Drive o el repositorio, activa antes “Instalar apps de origen desconocido” en los ajustes del navegador o del gestor de archivos.</div>
+                </div>
+
+                <div class="card step-card">
+                    <div class="step-num">2</div>
+                    <div class="card-title">Copia el repositorio a tu teléfono</div>
+                    <div class="card-text">Transfiere la carpeta completa <code>base_consultora_uo</code> a la memoria interna, por ejemplo en <code>Descargas/base_consultora_uo</code>. El <code>index.Html</code> debe quedar en la raíz de esa carpeta, junto a sus subcarpetas (<code>css</code>, <code>js</code>, <code>imagen</code>, etc.).</div>
+                </div>
+
+                <div class="card step-card">
+                    <div class="step-num">3</div>
+                    <div class="card-title">Abre la app y toca “Root folder”</div>
+                    <div class="card-text">En la pantalla principal busca la opción <strong>“Root folder”</strong> (Carpeta raíz) y tócala. Es la carpeta que la app publicará como web.</div>
+                    <figure class="step-img">
+                        <img src="imagen/ayuda/paso-3.png" alt="Pantalla principal con Root folder resaltado" onerror="this.style.display='none'; this.parentNode.classList.add('img-fail');">
+                        <div class="img-fallback">
+                            <span class="img-emoji">📱</span>
+                            <span class="img-desc">Captura: pantalla principal de la app con la opción <strong>Root folder</strong> resaltada</span>
+                        </div>
+                    </figure>
+                </div>
+
+                <div class="card step-card">
+                    <div class="step-num">4</div>
+                    <div class="card-title">Selecciona la carpeta y confirma</div>
+                    <div class="card-text">Navega hasta <code>base_consultora_uo</code> con el explorador que se abre y confirma con <strong>“SELECT THIS FOLDER”</strong>.</div>
+                    <figure class="step-img">
+                        <img src="imagen/ayuda/paso-4.png" alt="Explorador de archivos con SELECT THIS FOLDER" onerror="this.style.display='none'; this.parentNode.classList.add('img-fail');">
+                        <div class="img-fallback">
+                            <span class="img-emoji">📂</span>
+                            <span class="img-desc">Captura: explorador con la carpeta seleccionada y el botón <strong>SELECT THIS FOLDER</strong></span>
+                        </div>
+                    </figure>
+                </div>
+
+                <div class="card step-card">
+                    <div class="step-num">5</div>
+                    <div class="card-title">Pulsa “START” y copia la URL</div>
+                    <div class="card-text">El estado debe pasar a <strong>“running”</strong>. La app mostrará una dirección como <code>http://127.0.0.1:8080</code> (o <code>http://localhost:8080</code>). Anótala o mantenla visible.</div>
+                    <figure class="step-img">
+                        <img src="imagen/ayuda/paso-5.png" alt="Servidor en estado running con la URL" onerror="this.style.display='none'; this.parentNode.classList.add('img-fail');">
+                        <div class="img-fallback">
+                            <span class="img-emoji">▶️</span>
+                            <span class="img-desc">Captura: servidor en estado <strong>running</strong> con la URL <code>http://127.0.0.1:8080</code></span>
+                        </div>
+                    </figure>
+                </div>
+
+                <div class="card step-card">
+                    <div class="step-num">6</div>
+                    <div class="card-title">Abre la URL en tu navegador</div>
+                    <div class="card-text">Escribe esa dirección en Chrome, Firefox, Edge o el navegador que uses. Verás tu repositorio funcionando exactamente igual que en línea.</div>
+                    <figure class="step-img">
+                        <img src="imagen/ayuda/paso-6.png" alt="Barra de direcciones del navegador con la URL local" onerror="this.style.display='none'; this.parentNode.classList.add('img-fail');">
+                        <div class="img-fallback">
+                            <span class="img-emoji">🌐</span>
+                            <span class="img-desc">Captura: navegador con la URL <code>http://127.0.0.1:8080</code> y el repositorio cargado</span>
+                        </div>
+                    </figure>
+                </div>
+
+                <div class="card step-card">
+                    <div class="step-num">7</div>
+                    <div class="card-title">Añade un acceso directo (opcional)</div>
+                    <div class="card-text">En el menú de Chrome elige <em>“Añadir a pantalla de inicio”</em>. Quedará como una app y no tendrás que escribir la dirección cada vez.</div>
+                </div>
+
+                <div class="card step-card">
+                    <div class="step-num">8</div>
+                    <div class="card-title">Al terminar, detén el servidor</div>
+                    <div class="card-text">Vuelve a la app y pulsa <strong>“STOP”</strong> para liberar recursos y evitar que siga en segundo plano.</div>
+                </div>
+            </div>
+
+            <div class="panel panel-ok" style="margin-top: 1.5rem;">
+                <h3>💡 Consejo</h3>
+                <p>Si solo quieres consultar el repositorio y tienes internet, <strong>la Opción A es la más rápida</strong>. Guarda la Opción B para cuando estés sin conexión o quieras trabajar con el repositorio en el teléfono.</p>
+            </div>
+        </section>
+
+        <div class="divider">Otras plataformas</div>
+
+        <!-- ==================== OTRAS PLATAFORMAS (consolidado) ==================== -->
+        <section id="otras">
+            <div class="section-title" style="margin-top: 0;">
+                <h2>🖥️ Windows, macOS, iPhone/iPad, Linux, Solaris y Unix</h2>
+                <p>En estos sistemas no hay que instalar nada: el navegador abre el archivo directamente.</p>
+            </div>
+
+            <div class="panel panel-ok">
+                <h3>✅ Abre el <code>index.Html</code> con doble clic</h3>
+                <p>En <strong>Windows, macOS, Linux, Solaris, BSD</strong> y demás variantes Unix, los navegadores permiten el acceso local sin restricciones. Usa cualquiera de estas formas:</p>
+                <ul>
+                    <li><strong>Doble clic</strong> sobre <code>index.Html</code>. Se abrirá con tu navegador predeterminado.</li>
+                    <li><strong>Arrastrar</strong> el archivo sobre una ventana del navegador ya abierta.</li>
+                    <li><strong>Clic derecho → Abrir con →</strong> el navegador que prefieras (Chrome, Firefox, Edge, Safari…).</li>
+                    <li>O escribir en la barra de direcciones: <code>file:///C:/ruta/a/tu/carpeta/index.Html</code> (Windows) o <code>file:///home/usuario/ruta/index.Html</code> (Unix/Solaris).</li>
+                </ul>
+                <p style="margin-top: 0.75rem;"><strong>En iPhone o iPad:</strong> abre la app <em>Archivos</em>, toca el <code>index.Html</code> y verás la vista previa. Para el navegador, usa <em>Compartir → Abrir en Safari</em>.</p>
+            </div>
+
+            <div class="panel panel-warn">
+                <h3>ℹ️ Si algo no carga en local</h3>
+                <p>Revisa que hayas copiado <strong>todas las subcarpetas</strong> del repositorio (<code>css</code>, <code>js</code>, <code>imagen</code>, <code>index</code>…) junto al <code>index.Html</code>. Si falta alguna, el navegador mostrará la página sin estilos o sin datos.</p>
+            </div>
+        </section>
+
+        <div class="divider">Búsquedas</div>
+
+        <!-- ==================== BÚSQUEDAS ==================== -->
+        <section id="buscar">
+            <div class="section-title" style="margin-top: 0;">
+                <h2>🔍 Cómo realizar las búsquedas (local o en línea)</h2>
+                <p>Las búsquedas son idénticas en ambos modos; solo cambia cómo abres el repositorio.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card step-card">
+                    <div class="step-num">1</div>
+                    <div class="card-title">Ubica el buscador</div>
+                    <div class="card-text">En la parte superior de la página principal está la barra de búsqueda. Toca o haz clic dentro de ella.</div>
+                </div>
+                <div class="card step-card">
+                    <div class="step-num">2</div>
+                    <div class="card-title">Escribe las palabras clave</div>
+                    <div class="card-text">Puedes buscar por <em>título de la tesis</em>, <em>nombre del autor</em>, <em>año de publicación</em>, <em>tema</em>, <em>línea de investigación</em> o <em>facultad</em>.</div>
+                </div>
+                <div class="card step-card">
+                    <div class="step-num">3</div>
+                    <div class="card-title">Usa palabras sencillas</div>
+                    <div class="card-text">Si no aparece nada, prueba con sinónimos o con menos palabras. Por ejemplo, “tesis educación” en lugar de una frase completa.</div>
+                </div>
+                <div class="card step-card">
+                    <div class="step-num">4</div>
+                    <div class="card-title">Revisa los resultados</div>
+                    <div class="card-text">Toca una ficha o el título del trabajo para abrir su documento completo con el resumen y los datos del autor.</div>
+                </div>
+                <div class="card step-card" style="grid-column: 1 / -1;">
+                    <div class="step-num">5</div>
+                    <div class="card-title">Búsqueda dentro de la página (para encontrar una palabra en el texto visible)</div>
+                    <div class="card-text">En computadora pulsa <code>Ctrl + F</code> (Windows/Unix) o <code>Cmd + F</code> (macOS). En Android, iPhone o iPad usa el menú <em>“Buscar en la página”</em> del navegador.</div>
+                </div>
+            </div>
+
+            <div class="panel panel-warn" style="margin-top: 1.5rem;">
+                <h3>ℹ️ ¿Los resultados son diferentes en local y en línea?</h3>
+                <p><strong>No.</strong> El repositorio es exactamente el mismo en ambos modos. Lo único que cambia es cómo lo abres: <em>en línea</em> desde la URL de GitHub Pages, o <em>en local</em> desde <code>http://127.0.0.1:8080</code> con Simple HTTP Server en Android. Los datos, las tesis, la búsqueda y los filtros se comportan igual.</p>
+                <p>Si en local notas que algo no carga (por ejemplo, imágenes o estilos), revisa que hayas copiado <strong>todas las subcarpetas</strong> del repositorio a la carpeta raíz que elegiste en la app, no solo el <code>index.Html</code>.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-left">
+                <img src="imagen/logo.png" alt="Logo" onerror="this.style.display='none'">
+                <div class="footer-brand">
+                    <span class="footer-brand-title">Consultora de Tesis</span>
+                    <span class="footer-brand-sub">Facultad Ciencias de la Educación</span>
+                </div>
+            </div>
+            <div class="footer-right">
+                <a href="mailto:sosasoftcuba@gmail.com" class="footer-email">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    sosasoftcuba@gmail.com
+                </a>
+                <div class="footer-copy">
+                    &copy; <span class="current-year"></span> Todos los derechos reservados.
+                </div>
+                <div class="footer-copy">
+                    | mirror:<a href="https://cubaplaza.net" target="_blank" style="color: var(--text-muted); text-decoration: underline;"> https://cubaplaza.net</a>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-item">
+                    Resumen Mensual:
+                </div>
+                <div class="stat-item">
+                    | 👁️ Visitas: <strong id="visit-count">...</strong>
+                </div>
+                <div class="stat-item">
+                    | 📄 Tesis Descargadas: <strong id="thesis-count">...</strong>
+                </div>
+            </div>
+
+            <div style="width: 100%; text-align: center; font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+                <span id="last-update">Verificando fecha de actualización...</span>
+            </div>
+
+            <div class="footer-legal">
+                <strong>Advertencia:</strong>
+                El contenido de estos materiales puede ser usado, publicado o modificado siempre y cuando se referencien a sus autores originales. La Universidad de Oriente mantiene todos los derechos de copyright referentes a estos materiales u otros documentos de su pertenencia.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelectorAll('.current-year').forEach(el => el.textContent = new Date().getFullYear());
+
+        fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/visitas_web')
+            .then(res => res.json())
+            .then(data => { document.getElementById('visit-count').innerText = data.value; })
+            .catch(e => { document.getElementById('visit-count').innerText = 'N/D'; });
+
+        fetch('https://abacus.jasoncameron.dev/get/sosasoftcuba_uo/tesis_abiertas')
+            .then(res => res.json())
+            .then(data => { document.getElementById('thesis-count').innerText = data.value || 0; })
+            .catch(e => { document.getElementById('thesis-count').innerText = 'N/D'; });
+
+        document.getElementById('last-update').innerText = 'Guía actualizada · ' + new Date().toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric' });
+    </script>
+</body>
+</html>

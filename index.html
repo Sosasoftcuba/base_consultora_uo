@@ -48,11 +48,11 @@
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 10005;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            pointer-events: none; /* No bloquea los clics de la página */
+            pointer-events: none; 
             gap: 10px;
         }
         .toast {
-            pointer-events: auto; /* Reactiva los clics en la notificación */
+            pointer-events: auto; 
             background: var(--surface);
             border-left: 5px solid var(--ok-border);
             border-radius: 8px;
@@ -63,15 +63,11 @@
             gap: 15px;
             min-width: 320px;
             max-width: 450px;
-            /* Animación de entrada (escala) */
             transform: scale(0.8) translateY(20px);
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .toast.show { 
-            transform: scale(1) translateY(0); 
-            opacity: 1;
-        }
+        .toast.show { transform: scale(1) translateY(0); opacity: 1; }
         .toast.error { border-left-color: var(--alert-border); }
         .toast.info { border-left-color: var(--primary); }
         
@@ -413,10 +409,8 @@
             
             container.appendChild(toast);
             
-            // Animación de entrada
             setTimeout(() => { toast.classList.add('show'); }, 10);
 
-            // Auto-eliminar después de 5 segundos
             setTimeout(() => {
                 if (toast.parentElement) {
                     toast.classList.remove('show');
@@ -534,7 +528,7 @@
         // --- LÓGICA DE COMPROBACIÓN DE VERSIÓN ---
         async function verificarActualizacion(localVersion) {
             const btn = document.getElementById('btn-estado-version');
-            btn.style.display = 'inline-block'; // Mostrar botón
+            btn.style.display = 'inline-block';
             
             if (!navigator.onLine) {
                 btn.innerText = 'Modo Offline';
@@ -570,7 +564,6 @@
                         window.REMOTE_VERSION = remoteVersion;
 
                         if (remoteVersion.localeCompare(localVersion) > 0) {
-                            // HAY NUEVA VERSIÓN (Parpadea en Naranja)
                             btn.innerText = '¡Nueva Versión!';
                             btn.classList.add('blink');
                             btn.style.backgroundColor = ''; 
@@ -578,7 +571,6 @@
                             btn.style.borderColor = '';
                             btn.onclick = (e) => { e.preventDefault(); abrirModalActualizacion(); };
                         } else {
-                            // ESTÁ AL DÍA (Verde) -> Usa Toast Profesional Centrado
                             btn.innerText = 'Última versión';
                             btn.classList.remove('blink');
                             btn.style.backgroundColor = '#ecfdf5';
@@ -959,8 +951,24 @@
 
                 const normalizedQuery = normalizeText(query);
                 const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
-                let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
-                if (searchTerms.length === 0) searchTerms = rawWords;
+
+                // --- NUEVA LÓGICA DE AGRUPACIÓN DE MODIFICADORES ---
+                // Agrupa palabras cortas (como "no", "sin", "con") con la siguiente palabra
+                let groupedTerms = [];
+                const connectors = ['no', 'sin', 'con', 'para', 'por', 'en', 'de', 'del']; 
+
+                for (let i = 0; i < rawWords.length; i++) {
+                    const word = rawWords[i];
+                    if (connectors.includes(word) && i + 1 < rawWords.length) {
+                        groupedTerms.push(word + ' ' + rawWords[i + 1]);
+                        i++; // Saltar la siguiente palabra porque ya se agrupó
+                    } else {
+                        groupedTerms.push(word);
+                    }
+                }
+
+                let searchTerms = groupedTerms.filter(t => !stopWords.includes(t) && t.length > 1);
+                if (searchTerms.length === 0) searchTerms = groupedTerms;
 
                 let docFreq = {};
                 searchTerms.forEach(t => docFreq[t] = 0);
@@ -1050,8 +1058,20 @@
                     const query = searchInput.value.trim();
                     const normalizedQuery = normalizeText(query);
                     const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
-                    let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
-                    if (searchTerms.length === 0) searchTerms = rawWords;
+                    
+                    let groupedTerms = [];
+                    const connectors = ['no', 'sin', 'con', 'para', 'por', 'en', 'de', 'del'];
+                    for (let i = 0; i < rawWords.length; i++) {
+                        const word = rawWords[i];
+                        if (connectors.includes(word) && i + 1 < rawWords.length) {
+                            groupedTerms.push(word + ' ' + rawWords[i + 1]);
+                            i++;
+                        } else {
+                            groupedTerms.push(word);
+                        }
+                    }
+                    let searchTerms = groupedTerms.filter(t => !stopWords.includes(t) && t.length > 1);
+                    if (searchTerms.length === 0) searchTerms = groupedTerms;
                     
                     let exactPhrases = [normalizedQuery];
                     if (searchTerms.length > 1) {
@@ -1072,8 +1092,20 @@
                     const query = searchInput.value.trim();
                     const normalizedQuery = normalizeText(query);
                     const rawWords = normalizedQuery.split(/\s+/).filter(t => t.length > 0);
-                    let searchTerms = rawWords.filter(t => !stopWords.includes(t) && t.length > 1);
-                    if (searchTerms.length === 0) searchTerms = rawWords;
+                    
+                    let groupedTerms = [];
+                    const connectors = ['no', 'sin', 'con', 'para', 'por', 'en', 'de', 'del'];
+                    for (let i = 0; i < rawWords.length; i++) {
+                        const word = rawWords[i];
+                        if (connectors.includes(word) && i + 1 < rawWords.length) {
+                            groupedTerms.push(word + ' ' + rawWords[i + 1]);
+                            i++;
+                        } else {
+                            groupedTerms.push(word);
+                        }
+                    }
+                    let searchTerms = groupedTerms.filter(t => !stopWords.includes(t) && t.length > 1);
+                    if (searchTerms.length === 0) searchTerms = groupedTerms;
                     
                     let exactPhrases = [normalizedQuery];
                     if (searchTerms.length > 1) {

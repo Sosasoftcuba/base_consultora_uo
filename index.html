@@ -42,6 +42,47 @@
             border-color: #f59e0b !important;
         }
 
+        /* --- TOAST NOTIFICATION (Centrado en pantalla) --- */
+        .toast-container {
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10005;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            pointer-events: none; /* No bloquea los clics de la página */
+            gap: 10px;
+        }
+        .toast {
+            pointer-events: auto; /* Reactiva los clics en la notificación */
+            background: var(--surface);
+            border-left: 5px solid var(--ok-border);
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 20px 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            min-width: 320px;
+            max-width: 450px;
+            /* Animación de entrada (escala) */
+            transform: scale(0.8) translateY(20px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast.show { 
+            transform: scale(1) translateY(0); 
+            opacity: 1;
+        }
+        .toast.error { border-left-color: var(--alert-border); }
+        .toast.info { border-left-color: var(--primary); }
+        
+        .toast-icon { font-size: 1.8rem; line-height: 1; }
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 700; font-size: 1.1rem; color: var(--text-main); margin-bottom: 4px; }
+        .toast-message { font-size: 0.95rem; color: var(--text-muted); line-height: 1.4; }
+        .toast-version { font-size: 0.8rem; color: #94a3b8; margin-top: 8px; font-family: monospace; }
+        .toast-close { background: none; border: none; font-size: 1.4rem; color: #cbd5e1; cursor: pointer; padding: 0; line-height: 1; transition: color 0.2s; }
+        .toast-close:hover { color: var(--text-main); }
+
         /* --- LOADER UI --- */
         #loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -173,10 +214,14 @@
             .footer-right { align-items: center; text-align: center; }
             .footer-legal { text-align: center; } 
             .pagination { gap: 1rem; }
+            .toast { min-width: 90%; max-width: 90%; margin: 0 5%; }
         }
     </style>
 </head>
 <body>
+
+    <!-- CONTENEDOR DE NOTIFICACIONES TOAST (Centrado) -->
+    <div id="toast-container" class="toast-container"></div>
 
     <!-- MODAL DE ACTUALIZACIÓN -->
     <div id="modal-update" class="modal-overlay">
@@ -219,11 +264,12 @@
                     <span class="logo-subtitle">Facultad Ciencias de la Educación</span>
                 </div>
                 <span class="separator">|</span>
-                <div class="logo-text">
+                
+                <!-- BOTONES DE ACCIÓN -->
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <a href="ayuda.html" class="btn-page" style="text-decoration: none;">Ayuda</a>
-                </div>
-                <div class="logo-text" id="btn-nueva-version-container" style="display: none;">
-                    <a href="#" class="btn-page blink" id="btn-nueva-version" style="text-decoration: none;">Nueva Versión</a>
+                    <!-- Botón dinámico de versión -->
+                    <a href="#" class="btn-page" id="btn-estado-version" style="text-decoration: none; display: none;">Comprobando...</a>
                 </div>
             </div>
             <div class="env-badge" id="env-info">
@@ -345,6 +391,40 @@
                 .catch(e => {});
         }
 
+        // --- SISTEMA DE NOTIFICACIONES TOAST (PROFESIONAL - CENTRADO) ---
+        function mostrarToast(titulo, mensaje, tipo = 'success', version = null) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${tipo === 'error' ? 'error' : tipo === 'info' ? 'info' : ''}`;
+            
+            let icon = '✅';
+            if (tipo === 'error') icon = '⚠️';
+            if (tipo === 'info') icon = 'ℹ️';
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${titulo}</div>
+                    <div class="toast-message">${mensaje}</div>
+                    ${version ? `<div class="toast-version">Versión local: ${version}</div>` : ''}
+                </div>
+                <button class="toast-close" onclick="this.parentElement.classList.remove('show'); setTimeout(() => this.parentElement.remove(), 300);">×</button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Animación de entrada
+            setTimeout(() => { toast.classList.add('show'); }, 10);
+
+            // Auto-eliminar después de 5 segundos
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.classList.remove('show');
+                    setTimeout(() => { toast.remove(); }, 300);
+                }
+            }, 5000);
+        }
+
         // --- VARIABLES GLOBALES ---
         let chunkIndex = 1;
         window.TESIS = [];
@@ -420,9 +500,8 @@
             document.getElementById('last-update').innerText = `Última actualización: ${day}/${month}/${year} a las ${hour}:${min}`;
         }
 
-        // --- CONTROL DEL MODAL DE ACTUALIZACIÓN ---
-        document.getElementById('btn-nueva-version').addEventListener('click', (e) => {
-            e.preventDefault();
+        // --- LÓGICA DEL MODAL ---
+        function abrirModalActualizacion() {
             document.getElementById('txt-local-ver').innerText = window.LOCAL_VERSION || 'Desconocida';
             document.getElementById('txt-remote-ver').innerText = window.REMOTE_VERSION || 'Desconocida';
             document.getElementById('modal-update').style.display = 'flex';
@@ -430,7 +509,7 @@
             document.getElementById('msg-skipped').style.display = 'none';
             document.getElementById('btn-download-zip').style.display = 'inline-block';
             document.getElementById('btn-skip-zip').style.display = 'inline-block';
-        });
+        }
 
         document.getElementById('btn-download-zip').addEventListener('click', () => {
             document.getElementById('msg-downloaded').style.display = 'block';
@@ -446,7 +525,6 @@
             document.getElementById('btn-skip-zip').style.display = 'none';
         });
 
-        // Cerrar modal al hacer clic fuera
         document.getElementById('modal-update').addEventListener('click', (e) => {
             if(e.target.id === 'modal-update') {
                 document.getElementById('modal-update').style.display = 'none';
@@ -455,10 +533,28 @@
 
         // --- LÓGICA DE COMPROBACIÓN DE VERSIÓN ---
         async function verificarActualizacion(localVersion) {
-            if (!navigator.onLine || !localVersion) return;
+            const btn = document.getElementById('btn-estado-version');
+            btn.style.display = 'inline-block'; // Mostrar botón
             
+            if (!navigator.onLine) {
+                btn.innerText = 'Modo Offline';
+                btn.style.backgroundColor = '#f1f5f9';
+                btn.style.color = '#64748b';
+                btn.style.borderColor = '#cbd5e1';
+                btn.onclick = (e) => { 
+                    e.preventDefault(); 
+                    mostrarToast('Sin conexión', 'No hay conexión a internet para verificar actualizaciones.', 'info'); 
+                };
+                return;
+            }
+
+            btn.innerText = 'Comprobando...';
+            btn.style.backgroundColor = '#f8fafc';
+            btn.style.color = '#64748b';
+            btn.style.borderColor = '#e2e8f0';
+            btn.classList.remove('blink');
+
             try {
-                // Hacemos ping al meta de GitHub
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 4000);
                 const resRemote = await fetch(GITHUB_META_URL + '?t=' + Date.now(), { signal: controller.signal });
@@ -470,18 +566,42 @@
                     
                     if (matchRemote) {
                         const remoteVersion = matchRemote[1];
-                        // Comparar strings tipo "20231025120000". Si remota es mayor (más nueva), alertar.
+                        window.LOCAL_VERSION = localVersion;
+                        window.REMOTE_VERSION = remoteVersion;
+
                         if (remoteVersion.localeCompare(localVersion) > 0) {
-                            window.LOCAL_VERSION = localVersion;
-                            window.REMOTE_VERSION = remoteVersion;
-                            
-                            // Mostrar el botón parpadeante
-                            document.getElementById('btn-nueva-version-container').style.display = 'block';
+                            // HAY NUEVA VERSIÓN (Parpadea en Naranja)
+                            btn.innerText = '¡Nueva Versión!';
+                            btn.classList.add('blink');
+                            btn.style.backgroundColor = ''; 
+                            btn.style.color = '';
+                            btn.style.borderColor = '';
+                            btn.onclick = (e) => { e.preventDefault(); abrirModalActualizacion(); };
+                        } else {
+                            // ESTÁ AL DÍA (Verde) -> Usa Toast Profesional Centrado
+                            btn.innerText = 'Última versión';
+                            btn.classList.remove('blink');
+                            btn.style.backgroundColor = '#ecfdf5';
+                            btn.style.color = '#065f46';
+                            btn.style.borderColor = '#10b981';
+                            btn.onclick = (e) => { 
+                                e.preventDefault(); 
+                                mostrarToast('Sistema Actualizado', 'Usted ya posee la última actualización de los datos.', 'success', localVersion); 
+                            };
                         }
                     }
+                } else {
+                    throw new Error("Error de red");
                 }
             } catch (e) {
-                console.log("No se pudo verificar actualización (posible falta de internet o timeout).");
+                btn.innerText = 'Error de red';
+                btn.style.backgroundColor = '#fef2f2';
+                btn.style.color = '#991b1b';
+                btn.style.borderColor = '#f87171';
+                btn.onclick = (e) => { 
+                    e.preventDefault(); 
+                    mostrarToast('Error de conexión', 'No se pudo comprobar la versión. Compruebe su conexión a internet.', 'error'); 
+                };
             }
         }
 
@@ -512,19 +632,14 @@
                     `;
                 }
 
-                // SOLUCIÓN AL BLOQUEO DE FETCH EN FILE://
-                // Usar inyección de script en lugar de fetch para leer datos_meta.js local
                 const scriptMeta = document.createElement('script');
                 scriptMeta.src = 'index/datos_meta.js?t=' + Date.now();
                 scriptMeta.onload = () => {
                     if (window.TOTAL_CHUNKS) {
                         if (window.DATA_VERSION) {
                             mostrarFechaActualizacion(window.DATA_VERSION);
-                            // Llamar a la verificación de actualización en segundo plano
                             verificarActualizacion(window.DATA_VERSION);
                         }
-                        
-                        // Cargar los datos locales
                         cargarChunksLocal();
                     } else {
                         mostrarError("El archivo 'datos_meta.js' está vacío o corrupto. Revisa que la carpeta 'index' esté completa.");

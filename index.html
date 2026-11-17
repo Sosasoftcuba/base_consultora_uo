@@ -16,8 +16,8 @@
     <meta property="og:image" content="https://sosasoftcuba.github.io/base_consultora_uo/imagen/logo.png">
 
     <!-- META DESCRIPTION PARA SEO Y AGENTES DE IA -->
-    <meta name="description" content="Consultora de Tesis de la Universidad de Oriente (UO), Cuba. Repositorio académico centralizado de tesis de Maestría, Doctorado, Material Docente y Material de Consulta Obligatoria, con buscador local y privado que funciona también offline.">
-    <meta name="keywords" content="tesis, Universidad de Oriente, Cuba, repositorio académico, maestría, doctorado, material docente, material de consulta obligatoria, buscador de tesis, consultora de tesis, SOSASoftCuba">
+    <meta name="description" content="Repositorio público de tesis de la Universidad de Oriente, Cuba, de disímiles temas: Tesis, Tesis de Maestrías, Tesis de Doctorado, Material de Consulta, Material Investigativo, Material Docente y Métodos Investigativos. Informática, formación doctoral, formación docente, maestrías, doctorados y educación. Buscador local y privado que funciona también offline. Descargar y actualizar desde GitHub.">
+    <meta name="keywords" content="tesis, repositorio de tesis público, Universidad de Oriente, Cuba, tesis de maestría, tesis de doctorado, material de consulta, material investigativo, material docente, métodos investigativos, informática, formación doctoral, formación docente, maestrías, doctorados, educación, sosasoftcuba, programa educando contigo, buscador de tesis, consultora de tesis, actualización, descargar, SOSASoftCuba">
     <meta name="author" content="SosaSoft Cuba - Universidad de Oriente">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#1d4ed8">
@@ -37,7 +37,7 @@
       "name": "Consultora de Tesis - Universidad de Oriente",
       "alternateName": "Consultora de Tesis Local UO",
       "url": "https://sosasoftcuba.github.io/base_consultora_uo/",
-      "description": "Repositorio académico centralizado de tesis de Maestría, Doctorado y materiales docentes de la Universidad de Oriente, Cuba, con buscador local y privado que funciona también offline.",
+      "description": "Repositorio público de tesis de la Universidad de Oriente, Cuba, de disímiles temas: Tesis, Tesis de Maestrías, Tesis de Doctorado, Material de Consulta, Material Investigativo, Material Docente y Métodos Investigativos, con buscador local y privado que funciona también offline.",
       "inLanguage": "es",
       "publisher": {
         "@type": "Organization",
@@ -60,7 +60,7 @@
       "@context": "https://schema.org",
       "@type": "Dataset",
       "name": "Base de datos de tesis - Universidad de Oriente",
-      "description": "Colección centralizada de tesis de Maestría, Doctorado, Material Docente y Material de Consulta Obligatoria provenientes de las facultades y centros de investigación de la Universidad de Oriente, Cuba.",
+      "description": "Repositorio público de tesis de la Universidad de Oriente, Cuba, de disímiles temas. Colección de Tesis, Tesis de Maestrías, Tesis de Doctorado, Material de Consulta, Material Investigativo, Material Docente y Métodos Investigativos provenientes de las facultades y centros de investigación.",
       "url": "https://sosasoftcuba.github.io/base_consultora_uo/",
       "creator": {
         "@type": "Organization",
@@ -68,7 +68,7 @@
       },
       "license": "https://sosasoftcuba.github.io/base_consultora_uo/llms.txt",
       "isAccessibleForFree": true,
-      "keywords": ["tesis", "maestría", "doctorado", "material docente", "Universidad de Oriente", "Cuba", "repositorio académico"],
+      "keywords": ["tesis", "repositorio público de tesis", "Universidad de Oriente", "Cuba", "tesis de maestría", "tesis de doctorado", "material de consulta", "material investigativo", "material docente", "métodos investigativos", "informática", "formación doctoral", "formación docente", "maestrías", "doctorados", "educación", "sosasoftcuba", "programa educando contigo", "actualización", "descargar"],
       "inLanguage": "es"
     }
     </script>
@@ -87,7 +87,7 @@
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-page); color: var(--text-main); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; overflow-x: hidden; }
 
         /* --- ANIMACIÓN BOTÓN PARPADEANTE --- */
         @keyframes blinker { 50% { opacity: 0.3; } }
@@ -160,7 +160,9 @@
         #msg-skipped .msg-text { color: #92400e; }
 
         /* --- HEADER --- */
-        header { background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 0; position: sticky; top: 0; z-index: 10; box-shadow: var(--shadow-sm); }
+        /* Sin position:sticky — toda la página (header incluido) scrollea junta.
+           Antes el header pegajoso tapaba casi toda la pantalla del teléfono en horizontal. */
+        header { background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 0; position: static; z-index: 10; box-shadow: var(--shadow-sm); }
         .header-content { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
         .brand-group { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
         .logo-img { height: 55px; width: auto; object-fit: contain; color: transparent; }
@@ -215,6 +217,10 @@
         .btn-page { background-color: var(--surface); color: var(--primary); border: 2px solid var(--primary); padding: 0.6rem 1.2rem; border-radius: 4px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; text-align: center;}
         .btn-page:hover:not(:disabled) { background-color: var(--primary); color: white; }
         .btn-page:disabled { border-color: #ccc; color: #999; cursor: not-allowed; }
+
+        /* Botón "Descargar versión local": compacto, admite 2 líneas en pantallas angostas
+           para no estirar el header del teléfono a lo ancho. */
+        #btn-descargar-zip { max-width: 150px; white-space: normal; line-height: 1.25; padding: 0.5rem 0.8rem; }
         .page-info { font-size: 1rem; font-weight: 700; color: var(--text-main); }
 
         footer { background-color: var(--surface); border-top: 1px solid var(--border); padding: 2rem 0; margin-top: auto; }
@@ -260,6 +266,21 @@
             .footer-legal { text-align: center; } 
             .pagination { gap: 1rem; }
             .toast { min-width: 90%; max-width: 90%; margin: 0 5%; }
+        }
+
+        /* --- TELÉFONO EN HORIZONTAL (pantalla corta): header compacto en una fila --- */
+        @media (max-height: 500px) and (orientation: landscape) {
+            header { padding: 0.4rem 0; }
+            .header-content { flex-direction: row; text-align: left; gap: 0.75rem; flex-wrap: nowrap; align-items: center; }
+            .brand-group { flex-direction: row; gap: 0.75rem; align-items: center; flex-wrap: nowrap; }
+            .logo-img { height: 40px; max-width: 120px; }
+            .logo-title { font-size: 0.95rem; }
+            .logo-subtitle { display: none; }
+            .separator { display: none; }
+            .env-badge { white-space: nowrap; padding: 0.35rem 0.8rem; font-size: 0.75rem; max-width: none; width: auto; }
+            main { padding: 1rem 1rem; }
+            .search-container { margin: 0 auto 1.5rem auto; }
+            #btn-descargar-zip { max-width: 120px; font-size: 0.8rem; padding: 0.4rem 0.6rem; }
         }
     </style>
 </head>
@@ -323,7 +344,7 @@
                 <div class="msg-icon">📥</div>
                 <div class="msg-title">Descargando actualización...</div>
                 <div class="msg-text">
-                    Se está descargando la nueva versión <strong id="txt-download-ver"></strong>, espere por favor...
+                    Se está descargando la nueva versión <strong id="txt-download-ver"></strong> sin inconvenientes, espere por favor...
                     <br><br>
                     Al terminar la descarga, le recomendamos <strong>eliminar la vieja carpeta</strong> y <strong>extraer esta nueva en C:</strong> para un mejor alcance.
                 </div>
@@ -358,7 +379,8 @@
                 <img src="imagen/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
                 <span class="separator">|</span>
                 <div class="logo-text">
-                    <span class="logo-title">Consultora de Tesis Local</span>
+                    <!-- El sufijo (versión: web / versión: local) se inyecta por JS según el origen -->
+                    <span class="logo-title" id="logo-title">Repositorio de Tesis</span>
                     <span class="logo-subtitle">Facultad Ciencias de la Educación</span>
                 </div>
                 <span class="separator">|</span>
@@ -368,6 +390,10 @@
                     <a href="ayuda.html" class="btn-page" style="text-decoration: none;">Ayuda</a>
                     <!-- Botón dinámico de versión -->
                     <a href="#" class="btn-page" id="btn-estado-version" style="text-decoration: none; display: none;">Comprobando...</a>
+                    <!-- Descargar versión local (ZIP desde GitHub). Visible en web Y local si hay conexión a GitHub. -->
+                    <a href="https://github.com/sosasoftcuba/base_consultora_uo/archive/refs/heads/main.zip"
+                       id="btn-descargar-zip" class="btn-page" target="_blank" rel="noopener"
+                       style="text-decoration: none; display: none;">Descargar versión local</a>
                 </div>
             </div>
             <div class="env-badge" id="env-info">
@@ -434,9 +460,9 @@
                 <div class="footer-copy">
                     &copy; <span class="current-year"></span> Todos los derechos reservados.
                 </div>
-				<div class="footer-copy">
-                    | mirror:<a href="https://cubaplaza.net" target="_blank" style="color: var(--text-muted); text-decoration: underline;"> https://cubaplaza.net</a> · <a href="llms.txt" style="color: var(--text-muted); text-decoration: underline;">llms.txt</a>
-                </div>
+			<div class="footer-copy" style="font-size: 0.7rem;">
+                    | mirror: <a href="https://cubaplaza.net" target="_blank" style="color: #cbd5e1; text-decoration: underline;">cubaplaza.net</a> · <a href="llms.txt" style="color: #cbd5e1; text-decoration: underline;">llms.txt</a>
+		</div>
             </div>
             
             <!-- CONTADORES -->
@@ -449,6 +475,9 @@
                 </div>
                 <div class="stat-item">
                     | 📄 Tesis Descargadas: <strong id="thesis-count">...</strong>
+                </div>
+                <div class="stat-item" id="portable-stat" style="display: none;">
+                    | 📦 Portable descargada: <strong id="portable-count">...</strong>
                 </div>
             </div>
 
@@ -477,6 +506,14 @@
                 .then(res => res.json())
                 .then(data => { document.getElementById('thesis-count').innerText = data.value || 0; })
                 .catch(e => { document.getElementById('thesis-count').innerText = 'N/D'; });
+
+            fetch('https://abacus.jasoncameron.dev/get/sosasoftcuba_uo/portable_descargas')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('portable-count').innerText = data.value || 0;
+                    document.getElementById('portable-stat').style.display = 'flex';
+                })
+                .catch(e => {});
         } else {
             document.getElementById('visit-count').innerText = 'Offline';
             document.getElementById('thesis-count').innerText = 'Offline';
@@ -489,6 +526,42 @@
                 .then(data => { document.getElementById('thesis-count').innerText = data.value; })
                 .catch(e => {});
         }
+
+        // --- BOTÓN "DESCARGAR VERSIÓN LOCAL" (visible en web y local si hay conexión a GitHub) ---
+        // Nota técnica: codeload.github.com no expone CORS para este dominio, por lo que el
+        // navegador gestiona la descarga del ZIP y JS no puede espiar su finalización real.
+        // Se avisa al pulsar que la descarga va sin inconvenientes y se recomienda extraer en C:\.
+        (function configurarBotonDescarga() {
+            const btnZip = document.getElementById('btn-descargar-zip');
+            if (!btnZip) return;
+
+            const mostrarBoton = () => { btnZip.style.display = 'inline-block'; };
+
+            // Chequeo real de conexión a GitHub (más preciso que navigator.onLine):
+            // si el meta de la web responde, el ZIP también estará disponible.
+            fetch('https://sosasoftcuba.github.io/base_consultora_uo/index/datos_meta.js?t=' + Date.now(), { method: 'GET' })
+                .then(res => { if (res.ok) mostrarBoton(); })
+                .catch(() => { /* sin conexión a GitHub: el botón permanece oculto */ });
+
+            btnZip.addEventListener('click', () => {
+                // Contador de descargas de la versión portable
+                if (navigator.onLine) {
+                    fetch('https://abacus.jasoncameron.dev/hit/sosasoftcuba_uo/portable_descargas')
+                        .then(res => res.json())
+                        .then(data => {
+                            document.getElementById('portable-count').innerText = data.value;
+                            document.getElementById('portable-stat').style.display = 'flex';
+                        })
+                        .catch(e => {});
+                }
+                // Aviso de descarga en curso + recomendación de extracción
+                mostrarToast(
+                    'Descargando versión local',
+                    'La descarga del ZIP se inició sin inconvenientes desde GitHub. Al terminar, descomprímalo directamente en <strong>C:\\</strong> para agilizar la búsqueda.',
+                    'success'
+                );
+            });
+        })();
 
         // --- SISTEMA DE NOTIFICACIONES TOAST ---
         function mostrarToast(titulo, mensaje, tipo = 'success', version = null) {
@@ -529,6 +602,11 @@
         const isFileProtocol = window.location.protocol === 'file:';
         const isLocalhost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
         const isLocal = isFileProtocol || isLocalhost;
+
+        // Título del header con la versión de la interfaz que se está usando
+        document.getElementById('logo-title').innerText = isLocal
+            ? 'Repositorio de Tesis (versión: local)'
+            : 'Repositorio de Tesis (versión: web)';
 
         const GITHUB_META_URL = 'https://sosasoftcuba.github.io/base_consultora_uo/index/datos_meta.js';
 
@@ -666,7 +744,7 @@
                         window.REMOTE_VERSION = remoteVersion;
 
                         if (remoteVersion.localeCompare(localVersion) > 0) {
-                            btn.innerText = '¡Nueva Versión!';
+                            btn.innerText = 'Actualización disponible';
                             btn.classList.add('blink');
                             btn.style.backgroundColor = ''; 
                             btn.style.color = '';
@@ -918,6 +996,7 @@
             let totalPaginas = 1;
             let resultadosFiltrados = [];
             let globalModifier = null; 
+            let sinonimoFrases = []; // frases "sinónimo + modificador" (ej. "sistemas visuales")
 
             document.querySelectorAll('.current-year').forEach(el => el.textContent = new Date().getFullYear());
 
@@ -959,6 +1038,48 @@
                 return [...new Set(variations)];
             };
 
+            // Diccionario de sinónimos académicos (es-CU). Expande el sustantivo base para
+            // encontrar combinaciones como "herramientas visuales" → "sistemas visuales",
+            // "ayudas visuales", "dispositivos visuales", etc. Solo contiene términos
+            // frecuentes en tesis de educación/informática para no penalizar el rendimiento.
+            const DICCIONARIO_SINONIMOS = {
+                'herramienta': ['sistema', 'ayuda', 'dispositivo', 'instrumento', 'recurso', 'tecnologia', 'aplicacion', 'software'],
+                'estrategia': ['metodo', 'tecnica', 'procedimiento', 'accion', 'alternativa'],
+                'metodo': ['metodologia', 'tecnica', 'procedimiento', 'estrategia', 'enfoque'],
+                'tecnologia': ['herramienta', 'recurso', 'dispositivo', 'sistema', 'innovacion'],
+                'programa': ['proyecto', 'plan', 'curso', 'software', 'aplicacion'],
+                'actividad': ['tarea', 'ejercicio', 'accion', 'dinamica'],
+                'recurso': ['material', 'medio', 'apoyo', 'herramienta'],
+                'material': ['recurso', 'documento', 'texto', 'apoyo'],
+                'software': ['programa', 'aplicacion', 'sistema', 'herramienta'],
+                'juego': ['dinamica', 'actividad', 'estrategia'],
+                'aula': ['clase', 'sala', 'escenario', 'contexto'],
+                'docente': ['profesor', 'maestro', 'educador', 'personal'],
+                'profesor': ['docente', 'maestro', 'educador'],
+                'estudiante': ['alumno', 'educando', 'discente', 'aprendiz'],
+                'aprendizaje': ['ensenanza', 'formacion', 'instruccion', 'educacion'],
+                'ensenanza': ['aprendizaje', 'instruccion', 'formacion', 'practica'],
+                'evaluacion': ['valoracion', 'medicion', 'seguimiento'],
+                'comunicacion': ['interaccion', 'dialogo', 'intercambio'],
+                'problema': ['dificultad', 'obstaculo', 'situacion'],
+                'modelo': ['enfoque', 'paradigma', 'propuesta'],
+                'investigacion': ['estudio', 'analisis', 'indagacion'],
+                'habilidad': ['destreza', 'competencia', 'capacidad'],
+                'conocimiento': ['saber', 'informacion', 'aprendizaje'],
+                'escuela': ['centro', 'institucion', 'colegio']
+            };
+
+            // Devuelve los sinónimos del término (con variaciones de plural) o lista vacía.
+            const getSinonimos = (term) => {
+                const res = new Set();
+                for (const variations of [getStemVariations(term)]) {
+                    for (const v of variations) {
+                        if (DICCIONARIO_SINONIMOS[v]) DICCIONARIO_SINONIMOS[v].forEach(s => res.add(s));
+                    }
+                }
+                return [...res];
+            };
+
             const buildHighlightRegex = (terms) => {
                 const accentMap = { 'a': '[aáàäâ]', 'e': '[eéèëê]', 'i': '[iíìïî]', 'o': '[oóòöô]', 'u': '[uúùüû]' };
                 const patterns = terms.map(term => escapeRegExp(term).split('').map(char => accentMap[char.toLowerCase()] || char).join(''));
@@ -978,6 +1099,14 @@
                 if (exactPhrase && exactPhrase.length > 2) {
                     const idx = normalizedText.indexOf(exactPhrase);
                     if (idx !== -1) firstMatchIndex = idx;
+                }
+
+                // P2 — buscar también frases "sinónimo + modificador" para el snippet
+                if (firstMatchIndex === -1 && sinonimoFrases && sinonimoFrases.length) {
+                    for (const sf of sinonimoFrases) {
+                        const idx = normalizedText.indexOf(sf);
+                        if (idx !== -1) { firstMatchIndex = idx; break; }
+                    }
                 }
 
                 if (firstMatchIndex === -1 && globalModifier) {
@@ -1038,7 +1167,7 @@
                         <p class="card-text">${highlightMatches(rawSnippet, highlightRegex)}</p>
                         <div class="card-footer">
                             <div class="info-tag">
-                                (Resultado en las primeras 20,000 palabras)
+                                (Resultado en las primeras 25,000 palabras)
                             </div>
                             <a href="${item.archivo}" target="_blank" class="btn-open" onclick="registrarConsulta()">
                                 Leer documento
@@ -1105,7 +1234,20 @@
                     exactPhrases.push([...searchTerms].reverse().join(' '));
                 }
 
-                const termsToHighlight = [...new Set([...exactPhrases, ...searchTerms])].filter(t => t.length > 1);
+                // P2 — Sinónimos del sustantivo base combinados con el modificador:
+                // "herramientas visuales" → busca también "sistemas visuales", "ayudas visuales",
+                // "dispositivos visuales", etc. (prioridad entre frase exacta y modificador solo).
+                sinonimoFrases = [];
+                if (searchTerms.length > 1 && baseNoun && globalModifier && baseNoun !== globalModifier) {
+                    const sinonimos = getSinonimos(baseNoun);
+                    const modStem = getStemVariations(globalModifier);
+                    sinonimos.forEach(sin => {
+                        modStem.forEach(m => { sinonimoFrases.push(sin + ' ' + m); });
+                    });
+                    sinonimoFrases = [...new Set(sinonimoFrases)];
+                }
+
+                const termsToHighlight = [...new Set([...exactPhrases, ...sinonimoFrases, ...searchTerms])].filter(t => t.length > 1);
                 const highlightRegex = buildHighlightRegex(termsToHighlight);
 
                 resultadosFiltrados = [];
@@ -1124,6 +1266,15 @@
                         const occText = (textNorm.match(regexPhrase) || []).length;
                         if (occTitle > 0) { score += 10000000 + (occTitle * 1000); hasExact = true; }
                         if (occText > 0) { score += 5000000 + (occText * 1000); hasExact = true; }
+                    });
+
+                    // P2 — Nivel intermedio: "sinónimo + modificador" (ej. "sistemas visuales")
+                    sinonimoFrases.forEach(phrase => {
+                        const regexSyn = new RegExp(escapeRegExp(phrase), 'g');
+                        const occTitle = (titleNorm.match(regexSyn) || []).length;
+                        const occText = (textNorm.match(regexSyn) || []).length;
+                        if (occTitle > 0) { score += 3000000 + (occTitle * 500); }
+                        if (occText > 0) { score += 1500000 + (occText * 500); }
                     });
 
                     if (globalModifier) {
@@ -1158,7 +1309,7 @@
                 paginaActual = 1; 
 
                 if (resultadosFiltrados.length > 0) {
-                    resultsInfo.innerHTML = `Se encontraron <strong>${resultadosFiltrados.length}</strong> tesis para "<em>${escapeHTML(query)}</em>"`;
+                    resultsInfo.innerHTML = `<strong>${resultadosFiltrados.length}</strong> coincidencias para la frase "<em>${escapeHTML(query)}</em>"`;
                 }
                 renderizarPagina(query, normalizedQuery, searchTerms, highlightRegex);
             };
@@ -1231,12 +1382,13 @@
                 }
             });
 
-            let debounceTimer;
-            searchInput.addEventListener('input', () => {
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(performSearch, 300);
-            });
+            // La búsqueda NO se dispara al escribir: en teléfonos viejos cada tecla
+            // relanzaba una búsqueda completa y congelaba la página. Solo se busca
+            // al pulsar el botón "Buscar" o la tecla Enter.
             searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); performSearch(); }
+            });
             clearBtn.addEventListener('click', () => {
                 searchInput.value = '';
                 searchInput.focus();
